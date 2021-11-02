@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:memestation/pages/homepage.dart';
 import 'package:memestation/services/api_service.dart';
@@ -163,29 +164,39 @@ class _PostMemeState extends State<PostMeme> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        titleSpacing: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_left),
-          onPressed: () => {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (_) => HomePage(),
-              ),
-            )
-          },
-        ),
-        title: Text("Post new meme"),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.blueGrey, Colors.blueGrey.shade800],
-              begin: Alignment.bottomRight,
-              end: Alignment.topLeft,
-            ),
+        leading: Padding(
+          padding: EdgeInsets.only(top: 10),
+          child: IconButton(
+            icon: Icon(Icons.arrow_left, color: Colors.black),
+            onPressed: () => {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (_) => HomePage(),
+                ),
+              )
+            },
           ),
         ),
+        title: Padding(
+          padding: EdgeInsets.only(top: 10),
+          child: SvgPicture.asset(
+            'assets/images/default-monochrome.svg',
+            height: 30,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        // flexibleSpace: Container(
+        //   decoration: BoxDecoration(
+        //     gradient: LinearGradient(
+        //       colors: [Colors.black45, Colors.transparent],
+        //       begin: Alignment.topCenter,
+        //       end: Alignment.bottomCenter,
+        //     ),
+        //   ),
+        // ),
+        elevation: 0,
+        titleSpacing: 0,
       ),
       body: Container(
         margin: EdgeInsets.all(24),
@@ -198,6 +209,22 @@ class _PostMemeState extends State<PostMeme> {
                 SizedBox(
                   child: InkWell(
                     child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                            bottomLeft: Radius.circular(10),
+                            bottomRight: Radius.circular(10)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 2,
+                            blurRadius: 7,
+                            offset: Offset(0, 3), // changes position of shadow
+                          ),
+                        ],
+                      ),
                       padding: EdgeInsets.all(24),
                       child: image != null
                           ? Image.file(image!, width: 160, height: 160)
@@ -205,19 +232,19 @@ class _PostMemeState extends State<PostMeme> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text("Please select image"),
-                                SizedBox(height: 15),
-                                Icon(Icons.image)
+                                SizedBox(height: 18),
+                                Icon(
+                                  Icons.image,
+                                  size: 50.0,
+                                  color: Colors.grey,
+                                )
                               ],
                             ),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
                     ),
                     onTap: () => pickImage(),
                   ),
                   width: MediaQuery.of(context).size.width,
-                  height: 200,
+                  height: 300,
                 ),
                 SizedBox(height: 20),
                 Text("Enter details about meme below"),
@@ -228,9 +255,9 @@ class _PostMemeState extends State<PostMeme> {
                 _buildPrivacy(),
                 SizedBox(height: 20),
                 MaterialButton(
-                  color: Colors.blueGrey,
+                  color: Colors.black,
                   textColor: Colors.white,
-                  child: Text("Save"),
+                  child: Text("Publish"),
                   onPressed: () => addPost(),
                 )
               ],

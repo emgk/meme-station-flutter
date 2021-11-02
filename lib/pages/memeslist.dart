@@ -2,8 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gravatar/flutter_gravatar.dart';
 import 'package:memestation/entities/jsonMap.dart';
+import 'package:memestation/pages/login.dart';
 import 'package:memestation/services/api_service.dart';
-import 'package:memestation/util/share.dart';
+import 'package:memestation/shared/memecard.dart';
 
 class MemesList extends StatefulWidget {
   @override
@@ -11,15 +12,24 @@ class MemesList extends StatefulWidget {
 }
 
 class _MemesListState extends State<MemesList> {
+  User? _user;
   List<Meme>? _memes;
 
   Map<String, dynamic> params = {};
+
+  late GlobalKey<RefreshIndicatorState> refreshKey;
 
   @override
   void initState() {
     super.initState();
 
+    refreshKey = GlobalKey<RefreshIndicatorState>();
+
     loadMemes().whenComplete(() {
+      setState(() {});
+    });
+
+    getCurrentUser().whenComplete(() {
       setState(() {});
     });
   }
@@ -32,76 +42,34 @@ class _MemesListState extends State<MemesList> {
     });
   }
 
+  Future getCurrentUser() async {
+    return await APIService.getLoggedUser().then((user) {
+      _user = user;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return null == _memes
-        ? Center(
-            child: Positioned(
-              top: MediaQuery.of(context).size.height * 0.5,
-              bottom: MediaQuery.of(context).size.height * 0.5,
+        ? SizedBox(
+            height: MediaQuery.of(context).size.height * 0.7,
+            child: Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(Colors.blue),
+                valueColor: AlwaysStoppedAnimation(Colors.black),
                 strokeWidth: 5.0,
               ),
             ),
           )
-        : ListView.builder(
-            primary: false,
-            shrinkWrap: true,
-            itemCount: _memes!.length,
-            itemBuilder: (context, index) {
-              return Container(
-                margin: const EdgeInsets.only(
-                  left: 5,
-                  right: 5,
-                  top: 20,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10),
-                      bottomLeft: Radius.circular(10),
-                      bottomRight: Radius.circular(10)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 2,
-                      blurRadius: 7,
-                      offset: Offset(0, 3), // changes position of shadow
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Visibility(
-                      visible: "" != _memes![index].description.toString(),
-                      child: Padding(
-                        padding: EdgeInsets.all(20),
-                        child: Text(
-                          _memes![index].description.toString(),
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    ),
-                    FittedBox(
-                      fit: BoxFit.fill,
-                      child: Image.network(
-                        _memes![index].imageUrl.toString(),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(
-                        top: 15,
-                        bottom: 15,
-                        left: 5,
-                        right: 5,
-                      ),
+        : RefreshIndicator(
+            child: Container(
+              padding: EdgeInsets.all(10),
+              child: SingleChildScrollView(
+                child: Column(children: <Widget>[
+                  Visibility(
+                    visible: null != _user,
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      width: MediaQuery.of(context).size.width,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -110,16 +78,23 @@ class _MemesListState extends State<MemesList> {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(8.0),
                                 child: Image.network(
-                                  Gravatar('unavailable2010@gmail.com')
+                                  Gravatar(_user?.email ?? 'test@example.com')
                                       .imageUrl(),
                                   height: 50.0,
                                   width: 50.0,
                                 ),
                               ),
+                              SizedBox(width: 20),
                               Column(
                                 children: [
-                                  Text("Govind Kumar"),
-                                  Text("2 minutes ago"),
+                                  Text(
+                                    _user?.name ?? "",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black,
+                                    ),
+                                  )
                                 ],
                               ),
                             ],
@@ -127,32 +102,70 @@ class _MemesListState extends State<MemesList> {
                           Row(
                             children: [
                               IconButton(
-                                icon: Icon(Icons.share),
-                                onPressed: () => {
-                                  ShareAPI.share(
-                                    _memes![index].imageUrl.toString(),
-                                    _memes![index].description.toString(),
-                                  )
-                                },
+                                icon: Icon(Icons.settings),
+                                onPressed: () => {},
                               ),
                               IconButton(
-                                icon: Icon(Icons.download),
-                                onPressed: () => {
-                                  ShareAPI.share(
-                                    _memes![index].imageUrl.toString(),
-                                    _memes![index].description.toString(),
-                                  )
+                                icon: Icon(Icons.logout),
+                                onPressed: () async {
+                                  await APIService.logout(() {
+                                    // show alert
+                                    // ScaffoldMessenger.of(context).showSnackBar(
+                                    //   SnackBar(
+                                    //     content: Text("Logged out successfully!"),
+                                    //   ),
+                                    // );
+                                    Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                          builder: (_) => Login()),
+                                    );
+                                  });
                                 },
-                              )
+                              ),
                             ],
-                          )
+                          ),
+                        ],
+                      ),
+                      margin: const EdgeInsets.only(
+                        left: 5,
+                        right: 5,
+                        top: 20,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                            bottomLeft: Radius.circular(10),
+                            bottomRight: Radius.circular(10)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 2,
+                            blurRadius: 7,
+                            offset: Offset(0, 3), // changes position of shadow
+                          ),
                         ],
                       ),
                     ),
-                  ],
-                ),
-              );
-            },
-          );
+                  ),
+                  ListView.builder(
+                    primary: false,
+                    shrinkWrap: true,
+                    itemCount: _memes!.length,
+                    itemBuilder: (context, index) {
+                      if (null == _memes) {
+                        return Container();
+                      } else {
+                        return MemeCard(meme: _memes![index], user: _user!);
+                      }
+                    },
+                  ),
+                ]),
+              ),
+            ),
+            onRefresh: () async {
+              await loadMemes();
+            });
   }
 }

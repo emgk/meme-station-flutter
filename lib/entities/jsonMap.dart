@@ -14,8 +14,11 @@ class Meme {
   String? title;
   String? description;
   String? tags;
-  int? folderId;
+  String? folderId;
   String? imageUrl;
+  List<User>? userData;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
   Meme({
     required this.id,
@@ -25,28 +28,37 @@ class Meme {
     required this.tags,
     required this.folderId,
     required this.imageUrl,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.userData,
   });
 
   factory Meme.fromJson(Map<String, dynamic> json) {
     return Meme(
-      id: json["id"],
+      id: json["_id"],
       userId: json["userId"],
       title: json["title"],
       description: json["description"],
       tags: json["tags"],
       folderId: json["folderId"],
       imageUrl: json["imageUrl"],
+      createdAt: DateTime.parse(json["createdAt"]),
+      updatedAt: DateTime.parse(json["updatedAt"]),
+      userData: List<User>.from(json["userData"].map((x) => User.fromJson(x))),
     );
   }
 
   Map<String, dynamic> toJson() => {
-        "_id": id,
+        "id": id,
         "userId": userId,
         "title": title,
         "description": description,
         "tags": tags,
         "folderId": folderId,
         "imageUrl": imageUrl,
+        "createdAt": createdAt?.toIso8601String(),
+        "updatedAt": updatedAt?.toIso8601String(),
+        "userData": List<User>.from(userData!.map((x) => x.toJson())),
       };
 }
 
@@ -65,6 +77,8 @@ class User {
   String? profilePicture;
   String? gender;
   String? city;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
   User({
     required this.id,
@@ -75,6 +89,8 @@ class User {
     required this.profilePicture,
     required this.gender,
     required this.city,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -87,6 +103,8 @@ class User {
       profilePicture: json["profilePicture"],
       gender: json["gender"],
       city: json["city"],
+      createdAt: DateTime.parse(json["createdAt"]),
+      updatedAt: DateTime.parse(json["updatedAt"]),
     );
   }
 
@@ -99,5 +117,7 @@ class User {
         "profilePicture": profilePicture,
         "gender": gender,
         "city": city,
+        "createdAt": createdAt!.toIso8601String(),
+        "updatedAt": updatedAt!.toIso8601String(),
       };
 }

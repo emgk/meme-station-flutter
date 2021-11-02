@@ -32,9 +32,6 @@ class APIService {
 
     try {
       var userData = json.encode(data);
-
-      print("user $userData");
-
       Response response = await dio.post(
         url,
         data: userData,
@@ -42,7 +39,34 @@ class APIService {
 
       return response;
     } catch (e) {
-      print("err $e");
+      throw Exception(e);
+    }
+  }
+
+  static Future saveMeme(
+    Map<String, dynamic> data,
+  ) async {
+    String url = "$baseUrl/save";
+
+    try {
+      var userData = json.encode(data);
+
+      // get access token
+      String token = await getAccessToken();
+
+      final response = await dio.post(
+        url,
+        data: userData,
+        options: Options(
+          headers: {
+            "accept": "*/*",
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      return response;
+    } catch (e) {
       throw Exception(e);
     }
   }
@@ -101,6 +125,43 @@ class APIService {
     callback();
   }
 
+  static Future<List<Meme>> getSavedPosts(
+    Map<String, dynamic> params,
+  ) async {
+    String url = "$baseUrl/memes/saved";
+
+    try {
+      // get access token
+      String token = await getAccessToken();
+
+      final response = await dio.get(
+        url,
+        options: Options(
+          headers: {
+            "accept": "*/*",
+            "Content-Type": "application/json",
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        var apiResponJson = json.decode(jsonEncode(response.data));
+        List<Meme> memes = [];
+
+        for (var prod in apiResponJson) {
+          memes.add(Meme.fromJson(prod));
+        }
+
+        return memes;
+      } else {
+        throw Exception('Failed!');
+      }
+    } catch (e) {
+      throw Exception('$e');
+    }
+  }
+
   static Future<List<Meme>> getMemes(
     Map<String, dynamic> params,
   ) async {
@@ -134,7 +195,7 @@ class APIService {
         throw Exception('Failed!');
       }
     } catch (e) {
-      throw Exception('Failed to load post $e');
+      throw Exception('$e');
     }
   }
 

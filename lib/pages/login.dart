@@ -3,9 +3,9 @@
 import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:memestation/constants/strings.dart';
 import 'package:memestation/pages/homepage.dart';
 import 'package:memestation/pages/register.dart';
 import 'package:memestation/services/api_service.dart';
@@ -29,7 +29,7 @@ class _LoginStates extends State<Login> {
         fit: StackFit.expand,
         children: <Widget>[
           Image(
-            image: AssetImage("assets/images/login-bg.jpg"),
+            image: AssetImage("assets/images/app-background.jpg"),
             fit: BoxFit.cover,
             color: Colors.black87,
             colorBlendMode: BlendMode.darken,
@@ -37,17 +37,19 @@ class _LoginStates extends State<Login> {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              FlutterLogo(
-                size: 100,
+              SvgPicture.asset(
+                'assets/images/default-monochrome-white.svg',
+                height: 50,
+                width: 10,
               ),
               Form(
                 child: Theme(
                   data: ThemeData(
                     brightness: Brightness.dark,
-                    primarySwatch: Colors.teal,
+                    primarySwatch: Colors.grey,
                     inputDecorationTheme: InputDecorationTheme(
                       labelStyle: TextStyle(
-                        color: Colors.teal,
+                        // color: Colors.teal,
                         fontSize: 20,
                       ),
                     ),
@@ -79,21 +81,24 @@ class _LoginStates extends State<Login> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             MaterialButton(
-                              color: Colors.blueGrey,
+                              color: Colors.white10,
                               textColor: Colors.white,
                               child: Text("Login"),
                               onPressed: () => {doLogin()},
                             ),
-                            MaterialButton(
-                              color: Colors.black87,
-                              textColor: Colors.white,
-                              child: Text("Register"),
-                              onPressed: () => {
+                            GestureDetector(
+                              child: Text(
+                                "Create new account",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              onTap: () {
                                 Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(builder: (_) => Register()),
-                                )
+                                );
                               },
-                            )
+                            ),
                           ],
                         )
                       ],

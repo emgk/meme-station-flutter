@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 import 'login.dart';
 
 class Splash extends StatefulWidget {
@@ -28,10 +30,14 @@ class _SplashState extends State<Splash> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/logo.png', height: 120),
-            SizedBox(height: 30),
+            SvgPicture.asset(
+              'assets/images/default-monochrome-white.svg',
+              height: 50,
+              width: 10,
+            ),
+            SizedBox(height: 10),
             Text(
-              'Meme Station is loading...',
+              'is starting...',
               style: TextStyle(
                 fontSize: 20,
                 color: Colors.white,
