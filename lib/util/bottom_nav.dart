@@ -1,7 +1,8 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_constructors_in_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_constructors_in_immutables, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
 import 'package:memestation/pages/postmeme.dart';
+import 'package:memestation/shared/slideup.dart';
 
 class BottomNav extends StatelessWidget {
   final Function switchTab;
@@ -21,7 +22,34 @@ class BottomNav extends StatelessWidget {
           size: Size(MediaQuery.of(context).size.width, 80),
           painter: BottomCustomPainer(),
         ),
-        PostMeme(),
+        SlideUp(
+          title: 'Post a meme',
+          description: 'Please enter details below',
+          child: PostMeme(),
+          trigger: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Card(
+                margin: EdgeInsets.only(bottom: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(100),
+                  ),
+                ),
+                elevation: 5,
+                child: SizedBox(
+                  height: 50,
+                  width: 50,
+                  child: Icon(
+                    Icons.upload_rounded,
+                    color: Colors.grey,
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
         SizedBox(
           width: MediaQuery.of(context).size.width,
           height: 80,

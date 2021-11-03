@@ -14,6 +14,7 @@ class MemesList extends StatefulWidget {
 class _MemesListState extends State<MemesList> {
   User? _user;
   List<Meme>? _memes;
+  List<Folder>? _folders;
 
   Map<String, dynamic> params = {};
 
@@ -32,6 +33,10 @@ class _MemesListState extends State<MemesList> {
     getCurrentUser().whenComplete(() {
       setState(() {});
     });
+
+    loadFolders().whenComplete(() {
+      setState(() {});
+    });
   }
 
   static GlobalKey _globalKey = GlobalKey();
@@ -40,6 +45,14 @@ class _MemesListState extends State<MemesList> {
     return await APIService.getMemes(params).then((memes) {
       setState(() {
         _memes = memes;
+      });
+    });
+  }
+
+  Future loadFolders() async {
+    return await APIService.getFolders().then((folders) {
+      setState(() {
+        _folders = folders;
       });
     });
   }
@@ -156,8 +169,12 @@ class _MemesListState extends State<MemesList> {
                 shrinkWrap: true,
                 itemCount: _memes!.length,
                 itemBuilder: (context, index) {
-                  if (null != _memes && _memes!.isNotEmpty) {
-                    return MemeCard(meme: _memes![index], user: _user!);
+                  if (null != _memes &&
+                      _memes!.isNotEmpty &&
+                      null != _folders &&
+                      _folders!.isNotEmpty) {
+                    return MemeCard(
+                        meme: _memes![index], user: _user!, folders: _folders!);
                   }
                   return Container();
                 },

@@ -8,17 +8,19 @@ import 'package:flutter_gravatar/flutter_gravatar.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:memestation/entities/jsonMap.dart';
 import 'package:memestation/services/api_service.dart';
-import 'package:memestation/util/actionbuttons.dart';
+import 'package:memestation/shared/pickfolder.dart';
 import 'package:memestation/util/share.dart';
 
 class MemeCard extends StatefulWidget {
   final Meme meme;
   final User user;
+  final List<Folder> folders;
 
   MemeCard({
     Key? key,
     required this.meme,
     required this.user,
+    required this.folders,
   }) : super(key: key);
 
   @override
@@ -150,7 +152,7 @@ class _MemeCardState extends State<MemeCard> {
           Visibility(
             visible: "" != widget.meme.description.toString(),
             child: Padding(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.all(15),
               child: Text(
                 widget.meme.description.toString(),
                 style: TextStyle(
@@ -198,12 +200,7 @@ class _MemeCardState extends State<MemeCard> {
             ),
           ),
           Container(
-            padding: EdgeInsets.only(
-              top: 15,
-              bottom: 15,
-              left: 5,
-              right: 5,
-            ),
+            padding: EdgeInsets.all(5),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -219,8 +216,8 @@ class _MemeCardState extends State<MemeCard> {
                             Gravatar(
                               widget.meme.user![0].email ?? '',
                             ).imageUrl(),
-                            height: 50.0,
-                            width: 50.0,
+                            height: 30.0,
+                            width: 30.0,
                           ),
                         ),
                       ),
@@ -237,6 +234,7 @@ class _MemeCardState extends State<MemeCard> {
                         Text(
                           (Jiffy(widget.meme.user![0].createdAt).fromNow()),
                           style: TextStyle(
+                            fontSize: 12,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -264,7 +262,7 @@ class _MemeCardState extends State<MemeCard> {
                       ),
                       onPressed: () {
                         if (!saved) {
-                          folderPicker(context, widget.user.folders, (data) {
+                          folderPicker(context, widget.folders, (data) {
                             _toggleSave(data.id);
                           });
                         } else {

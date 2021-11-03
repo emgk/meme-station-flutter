@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:memestation/pages/login.dart';
 import 'package:memestation/services/api_service.dart';
+import 'package:memestation/shared/formui.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -66,187 +67,73 @@ class _RegisterState extends State<Register> {
   }
 
   Widget _nameField() {
-    return Padding(
-      padding: EdgeInsets.only(left: 20, right: 20),
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Name",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey,
-              ),
-            ),
-            SizedBox(height: 10),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white54,
-                borderRadius: BorderRadius.circular(20),
-                border: Border(
-                  bottom: BorderSide(
-                    color: Colors.grey.shade300,
-                    width: 1,
-                  ),
-                  top: BorderSide(
-                    color: Colors.grey.shade300,
-                    width: 1,
-                  ),
-                  right: BorderSide(
-                    color: Colors.grey.shade300,
-                    width: 1,
-                  ),
-                  left: BorderSide(
-                    color: Colors.grey.shade300,
-                    width: 1,
-                  ),
-                ),
-              ),
-              child: TextFormField(
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.only(left: 20),
-                  border: InputBorder.none,
-                  hintText: 'Eg. John doe',
-                ),
-                keyboardType: TextInputType.multiline,
-                validator: (value) {
-                  if (null == value) {
-                    return 'Title is required';
-                  }
-                },
-                onSaved: (value) {
-                  if (null != value) {
-                    _name = value;
-                  }
-                },
-              ),
-            ),
-          ]),
+    return FormInput(
+      label: "Name",
+      child: TextFormField(
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.only(left: 20),
+          border: InputBorder.none,
+          hintText: 'Eg. John doe',
+        ),
+        keyboardType: TextInputType.multiline,
+        validator: (value) {
+          if (null == value) {
+            return 'Name is required';
+          }
+        },
+        onSaved: (value) {
+          if (null != value) {
+            _name = value;
+          }
+        },
+      ),
     );
   }
 
   Widget _passwordField() {
-    return Padding(
-      padding: EdgeInsets.only(left: 20, right: 20),
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Password",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey,
-              ),
-            ),
-            SizedBox(height: 10),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white54,
-                borderRadius: BorderRadius.circular(20),
-                border: Border(
-                  bottom: BorderSide(
-                    color: Colors.grey.shade300,
-                    width: 1,
-                  ),
-                  top: BorderSide(
-                    color: Colors.grey.shade300,
-                    width: 1,
-                  ),
-                  right: BorderSide(
-                    color: Colors.grey.shade300,
-                    width: 1,
-                  ),
-                  left: BorderSide(
-                    color: Colors.grey.shade300,
-                    width: 1,
-                  ),
-                ),
-              ),
-              child: TextFormField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.only(left: 20),
-                  border: InputBorder.none,
-                ),
-                keyboardType: TextInputType.multiline,
-                validator: (value) {
-                  if (null == value) {
-                    return 'Password is required';
-                  }
-                },
-                onSaved: (value) {
-                  if (null != value) {
-                    _password = value;
-                  }
-                },
-              ),
-            ),
-          ]),
+    return FormInput(
+      label: "Password",
+      child: TextFormField(
+        obscureText: true,
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.only(left: 20),
+          border: InputBorder.none,
+        ),
+        keyboardType: TextInputType.multiline,
+        validator: (value) {
+          if (null == value) {
+            return 'Password is required';
+          }
+        },
+        onSaved: (value) {
+          if (null != value) {
+            _password = value;
+          }
+        },
+      ),
     );
   }
 
   Widget _emailField() {
-    return Padding(
-      padding: EdgeInsets.only(left: 20, right: 20),
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Email",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey,
-              ),
-            ),
-            SizedBox(height: 10),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white54,
-                borderRadius: BorderRadius.circular(20),
-                border: Border(
-                  bottom: BorderSide(
-                    color: Colors.grey.shade300,
-                    width: 1,
-                  ),
-                  top: BorderSide(
-                    color: Colors.grey.shade300,
-                    width: 1,
-                  ),
-                  right: BorderSide(
-                    color: Colors.grey.shade300,
-                    width: 1,
-                  ),
-                  left: BorderSide(
-                    color: Colors.grey.shade300,
-                    width: 1,
-                  ),
-                ),
-              ),
-              child: TextFormField(
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.only(left: 20),
-                  border: InputBorder.none,
-                ),
-                validator: (value) {
-                  if (null == value) {
-                    return 'Password is required';
-                  }
-                },
-                onSaved: (value) {
-                  if (null != value) {
-                    _email = value;
-                  }
-                },
-              ),
-            ),
-          ]),
+    return FormInput(
+      label: "Email",
+      child: TextFormField(
+        keyboardType: TextInputType.emailAddress,
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.only(left: 20),
+          border: InputBorder.none,
+        ),
+        validator: (value) {
+          if (null == value) {
+            return 'Email is required';
+          }
+        },
+        onSaved: (value) {
+          if (null != value) {
+            _email = value;
+          }
+        },
+      ),
     );
   }
 
@@ -296,16 +183,59 @@ class _RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Text(
-        "Create new account",
-        style: TextStyle(
-          color: Colors.black,
+    return Form(
+      key: _formKey,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(height: 20),
+            _nameField(),
+            SizedBox(height: 20),
+            _emailField(),
+            SizedBox(height: 20),
+            _passwordField(),
+            SizedBox(height: 20),
+            _genderField(),
+            SizedBox(height: 20),
+            Padding(
+              padding: EdgeInsets.only(left: 20, right: 20),
+              child: InkWell(
+                onTap: () => registerUser(),
+                child: Container(
+                  alignment: Alignment.center,
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.only(
+                    left: 30,
+                    right: 30,
+                    top: 10,
+                    bottom: 10,
+                  ),
+                  child: Text(
+                    'Create',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.orangeAccent,
+                    borderRadius: BorderRadius.circular(100),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.orangeAccent,
+                        offset: Offset(6, 2),
+                        blurRadius: 2.0,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            )
+          ],
         ),
       ),
-      onTap: () {
-        registerPopup(context);
-      },
     );
   }
 

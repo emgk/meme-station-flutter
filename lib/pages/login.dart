@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:memestation/pages/homepage.dart';
 import 'package:memestation/pages/register.dart';
 import 'package:memestation/services/api_service.dart';
+import 'package:memestation/shared/formui.dart';
+import 'package:memestation/shared/slideup.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -44,133 +46,56 @@ class _LoginStates extends State<Login> {
                     ),
                   ),
                   child: Container(
-                    padding: const EdgeInsets.all(40.0),
+                    padding: const EdgeInsets.all(20.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white54,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: Colors.grey.shade300,
-                                    width: 1,
-                                  ),
-                                  top: BorderSide(
-                                    color: Colors.grey.shade300,
-                                    width: 1,
-                                  ),
-                                  right: BorderSide(
-                                    color: Colors.grey.shade300,
-                                    width: 1,
-                                  ),
-                                  left: BorderSide(
-                                    color: Colors.grey.shade300,
-                                    width: 1,
-                                  ),
-                                ),
-                              ),
-                              child: TextFormField(
-                                controller: emailController,
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.only(left: 20),
-                                  border: InputBorder.none,
-                                  hintText: 'Enter Email',
-                                ),
-                                keyboardType: TextInputType.emailAddress,
-                              ),
+                        SizedBox(height: 15),
+                        FormInput(
+                          label: "Email",
+                          child: TextFormField(
+                            controller: emailController,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.only(left: 20),
+                              border: InputBorder.none,
+                              hintText: 'Enter Email',
                             ),
-                          ],
+                            keyboardType: TextInputType.emailAddress,
+                          ),
                         ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 10),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white54,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: Colors.grey.shade300,
-                                    width: 1,
-                                  ),
-                                  top: BorderSide(
-                                    color: Colors.grey.shade300,
-                                    width: 1,
-                                  ),
-                                  right: BorderSide(
-                                    color: Colors.grey.shade300,
-                                    width: 1,
-                                  ),
-                                  left: BorderSide(
-                                    color: Colors.grey.shade300,
-                                    width: 1,
-                                  ),
-                                ),
-                              ),
-                              child: TextFormField(
-                                controller: passwordController,
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.only(left: 20),
-                                  border: InputBorder.none,
-                                  hintText: 'Enter Password',
-                                ),
-                                keyboardType: TextInputType.text,
-                                obscureText: true,
-                              ),
+                        SizedBox(height: 15),
+                        FormInput(
+                          label: "Password",
+                          child: TextFormField(
+                            controller: passwordController,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.only(left: 20),
+                              border: InputBorder.none,
+                              hintText: 'Enter Password',
                             ),
-                          ],
+                            keyboardType: TextInputType.text,
+                            obscureText: true,
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 20.0),
                         ),
-                        SizedBox(height: 15),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                              child: InkWell(
-                                onTap: () => doLogin(),
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  width: MediaQuery.of(context).size.width,
-                                  padding: EdgeInsets.only(
-                                    left: 30,
-                                    right: 30,
-                                    top: 10,
-                                    bottom: 10,
-                                  ),
-                                  child: Text(
-                                    'Login',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.orangeAccent,
-                                    borderRadius: BorderRadius.circular(100),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.orangeAccent,
-                                        offset: Offset(6, 2),
-                                        blurRadius: 2.0,
-                                      )
-                                    ],
-                                  ),
+                            FormButton(label: "Login", onClick: doLogin),
+                            SizedBox(height: 30),
+                            SlideUp(
+                              title: "Create new account",
+                              description: "Please enter your details below",
+                              child: Register(),
+                              trigger: Text(
+                                "Create new account",
+                                style: TextStyle(
+                                  color: Colors.black,
                                 ),
                               ),
                             ),
-                            SizedBox(height: 30),
-                            Register(),
                           ],
                         )
                       ],
