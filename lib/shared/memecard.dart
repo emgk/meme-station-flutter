@@ -35,20 +35,13 @@ class _MemeCardState extends State<MemeCard> {
   void initState() {
     super.initState();
 
-    var savedPosts = widget.meme.save!.where((s) => s.userId == widget.user.id);
+    setState(() {
+      saved = widget.meme.isSaved!;
+    });
 
-    if (savedPosts.isNotEmpty) {
-      setState(() {
-        saved = true;
-      });
-    }
-
-    var likedPosts = widget.meme.like!.where((s) => s.userId == widget.user.id);
-    if (likedPosts.isNotEmpty) {
-      setState(() {
-        liked = true;
-      });
-    }
+    setState(() {
+      liked = widget.meme.isLiked!;
+    });
   }
 
   Future _toggleSave(folderId) async {
@@ -130,8 +123,8 @@ class _MemeCardState extends State<MemeCard> {
   Widget build(BuildContext build) {
     return Container(
       margin: const EdgeInsets.only(
-        left: 5,
-        right: 5,
+        left: 15,
+        right: 15,
         top: 20,
       ),
       decoration: BoxDecoration(
@@ -167,27 +160,41 @@ class _MemeCardState extends State<MemeCard> {
               ),
             ),
           ),
-          GestureDetector(
-            onDoubleTap: () {
-              _toggleLike();
-            },
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                FittedBox(
-                  fit: BoxFit.fill,
-                  child: Image.network(
-                    widget.meme.imageUrl.toString(),
-                  ),
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  color: Colors.grey.shade300,
+                  width: 1,
                 ),
-                showBookmartOverlay
-                    ? Icon(
-                        liked ? EvaIcons.heart : EvaIcons.heartOutline,
-                        color: Colors.white,
-                        size: 80.0,
-                      )
-                    : Container(),
-              ],
+                bottom: BorderSide(
+                  color: Colors.grey.shade300,
+                  width: 1,
+                ),
+              ),
+            ),
+            child: GestureDetector(
+              onDoubleTap: () {
+                _toggleLike();
+              },
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  FittedBox(
+                    fit: BoxFit.fill,
+                    child: Image.network(
+                      widget.meme.imageUrl.toString(),
+                    ),
+                  ),
+                  showBookmartOverlay
+                      ? Icon(
+                          liked ? EvaIcons.heart : EvaIcons.heartOutline,
+                          color: Colors.white,
+                          size: 80.0,
+                        )
+                      : Container(),
+                ],
+              ),
             ),
           ),
           Container(

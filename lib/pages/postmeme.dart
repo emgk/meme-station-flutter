@@ -15,7 +15,7 @@ class PostMeme extends StatefulWidget {
 
 class _PostMemeState extends State<PostMeme> {
   User? user;
-  Folder? selecteFolder;
+  Folder? seelectedFolder;
   String? _description = '';
   String? _tags = '';
   String? _privacy = 'public';
@@ -38,6 +38,8 @@ class _PostMemeState extends State<PostMeme> {
     try {
       final pic = await ImagePicker().pickImage(source: ImageSource.gallery);
       if (pic == null) return;
+
+      image = File(pic.path);
 
       setState(() {
         image = File(pic.path);
@@ -82,7 +84,7 @@ class _PostMemeState extends State<PostMeme> {
       'title': 'FAKE TITLE',
       'description': _description,
       'tags': _tags,
-      'folderId': selecteFolder!.id,
+      'folderId': seelectedFolder!.id,
       'userId': user!.id,
       'privacy': _privacy,
     };
@@ -98,7 +100,7 @@ class _PostMemeState extends State<PostMeme> {
       }
 
       image = null;
-      selecteFolder = null;
+      seelectedFolder = null;
       _formKey.currentState!.reset();
       Navigator.of(context).pop();
 
@@ -113,7 +115,7 @@ class _PostMemeState extends State<PostMeme> {
       );
 
       image = null;
-      selecteFolder = null;
+      seelectedFolder = null;
       _formKey.currentState!.reset();
       Navigator.of(context).pop();
 
@@ -124,289 +126,296 @@ class _PostMemeState extends State<PostMeme> {
   }
 
   Widget _buildDescription() {
-    return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Description",
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey,
-            ),
-          ),
-          SizedBox(height: 10),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white54,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Color.fromRGBO(0, 0, 0, 0.1),
-                  offset: Offset(0, 0),
-                  blurRadius: 4.0,
-                  spreadRadius: 2.0,
-                ),
-                BoxShadow(
-                  color: Color.fromRGBO(255, 255, 255, 0.9),
-                  offset: Offset(0, 0),
-                  blurRadius: 4.0,
-                  spreadRadius: 2.0,
-                )
-              ],
-            ),
-            child: TextFormField(
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.all(20),
-                border: InputBorder.none,
-                hintText: 'Enter short description...',
+    return Padding(
+      padding: EdgeInsets.only(left: 20, right: 20),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Description",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey,
               ),
-              maxLines: 4,
-              keyboardType: TextInputType.multiline,
-              validator: (value) {
-                if (null == value) {
-                  return 'Description is required';
-                }
-              },
-              onSaved: (value) {
-                if (null != value) {
-                  _description = value;
-                }
-              },
             ),
-          ),
-        ]);
+            SizedBox(height: 10),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white54,
+                borderRadius: BorderRadius.circular(20),
+                border: Border(
+                  bottom: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                  top: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                  right: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                  left: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.all(20),
+                  border: InputBorder.none,
+                  hintText: 'Enter short description...',
+                ),
+                maxLines: 4,
+                keyboardType: TextInputType.multiline,
+                validator: (value) {
+                  if (null == value) {
+                    return 'Description is required';
+                  }
+                },
+                onSaved: (value) {
+                  if (null != value) {
+                    _description = value;
+                  }
+                },
+              ),
+            ),
+          ]),
+    );
   }
 
   Widget _buildTags() {
-    return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Tags",
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey,
-            ),
-          ),
-          SizedBox(height: 10),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white54,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Color.fromRGBO(0, 0, 0, 0.1),
-                  offset: Offset(0, 0),
-                  blurRadius: 4.0,
-                  spreadRadius: 2.0,
-                ),
-                BoxShadow(
-                  color: Color.fromRGBO(255, 255, 255, 0.9),
-                  offset: Offset(0, 0),
-                  blurRadius: 4.0,
-                  spreadRadius: 2.0,
-                )
-              ],
-            ),
-            child: TextFormField(
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.only(left: 20),
-                border: InputBorder.none,
-                hintText: 'Enter tags by seperated by comma',
+    return Padding(
+      padding: EdgeInsets.only(left: 20, right: 20),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Tags",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey,
               ),
-              keyboardType: TextInputType.multiline,
-              validator: (value) {},
-              onSaved: (value) {
-                if (null != value) {
-                  _tags = value;
-                }
-              },
             ),
-          ),
-        ]);
+            SizedBox(height: 10),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white54,
+                borderRadius: BorderRadius.circular(20),
+                border: Border(
+                  bottom: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                  top: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                  right: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                  left: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.only(left: 20),
+                  border: InputBorder.none,
+                  hintText: 'Enter tags by seperated by comma',
+                ),
+                keyboardType: TextInputType.multiline,
+                validator: (value) {},
+                onSaved: (value) {
+                  if (null != value) {
+                    _tags = value;
+                  }
+                },
+              ),
+            ),
+          ]),
+    );
   }
 
   Widget _selectFolder() {
-    return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Folder",
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey,
+    return Padding(
+      padding: EdgeInsets.only(left: 20, right: 20),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Folder",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey,
+              ),
             ),
-          ),
-          SizedBox(height: 10),
-          Container(
-            margin: const EdgeInsets.only(
-              top: 10,
-              bottom: 10,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                  bottomLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  spreadRadius: 2,
-                  blurRadius: 7,
-                  offset: Offset(0, 3), // changes position of shadow
+            SizedBox(height: 10),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white54,
+                borderRadius: BorderRadius.circular(20),
+                border: Border(
+                  bottom: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                  top: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                  right: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                  left: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
                 ),
-              ],
-            ),
-            child: Row(
-              children: null == selecteFolder
-                  ? [
-                      InkWell(
-                        child: Container(
-                          width: MediaQuery.of(context).size.width - 40,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
-                                bottomLeft: Radius.circular(10),
-                                bottomRight: Radius.circular(10)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                spreadRadius: 2,
-                                blurRadius: 7,
-                                offset:
-                                    Offset(0, 3), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.folder,
-                                size: 30.0,
-                                color: Colors.grey,
-                              ),
-                              SizedBox(width: 10),
-                              Text("Please select folder"),
-                            ],
-                          ),
-                        ),
-                        onTap: () {
-                          if (null != user) {
-                            folderPicker(context, user!.folders, (data) {
-                              setState(() {
-                                selecteFolder = data;
-                              });
-                            });
-                          }
-                        },
-                      ),
-                    ]
-                  : [
-                      InkWell(
-                        onTap: () {
-                          if (null != user) {
-                            folderPicker(context, user!.folders, (data) {
-                              setState(() {
-                                selecteFolder = data;
-                              });
-                            });
-                          }
-                        },
-                        child: Row(
-                          children: [
-                            Container(
-                              margin: const EdgeInsets.only(
-                                right: 20,
-                              ),
-                              alignment: Alignment.center,
-                              height: 80,
-                              child: Container(
-                                width: 80,
-                                height: 80,
-                                child: Icon(
-                                  Icons.image,
-                                  color: Colors.black54,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.black12,
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(10),
-                                    bottomLeft: Radius.circular(10),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+              child: Row(
+                children: null == seelectedFolder
+                    ? [
+                        InkWell(
+                          child: Container(
+                            width: MediaQuery.of(context).size.width - 40,
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text(
-                                  selecteFolder!.title,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
+                                Icon(
+                                  Icons.folder,
+                                  size: 30.0,
+                                  color: Colors.grey,
+                                ),
+                                SizedBox(width: 5),
+                                Text("Please select folder"),
+                              ],
+                            ),
+                          ),
+                          onTap: () {
+                            if (null != user) {
+                              folderPicker(context, user!.folders, (data) {
+                                setState(() {
+                                  seelectedFolder = data;
+                                });
+                              });
+                            }
+
+                            _formKey.currentState!.reassemble();
+                          },
+                        ),
+                      ]
+                    : [
+                        InkWell(
+                          onTap: () {
+                            if (null != user) {
+                              folderPicker(context, user!.folders, (data) {
+                                setState(() {
+                                  seelectedFolder = data;
+                                });
+                              });
+                            }
+                          },
+                          child: Row(
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.only(
+                                  right: 20,
+                                ),
+                                alignment: Alignment.center,
+                                height: 80,
+                                child: Container(
+                                  width: 80,
+                                  height: 80,
+                                  child: Icon(
+                                    Icons.image,
+                                    color: Colors.black54,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black12,
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(10),
+                                      bottomLeft: Radius.circular(10),
+                                    ),
                                   ),
                                 ),
-                                SizedBox(height: 3),
-                                Text(
-                                  selecteFolder!.description,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      )
-                    ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    seelectedFolder!.title,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  SizedBox(height: 3),
+                                  Text(
+                                    seelectedFolder!.description,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+              ),
             ),
-          ),
-        ]);
+          ]),
+    );
   }
 
   Widget _buildPrivacy() {
-    return Row(
-      children: [
-        Row(children: [
-          Radio<String>(
-            fillColor:
-                MaterialStateColor.resolveWith((states) => Colors.orangeAccent),
-            value: 'public',
-            groupValue: _privacy,
-            onChanged: (privacy) {
-              setState(() {
-                _privacy = privacy;
-              });
-            },
-          ),
-          Text("Public"),
-        ]),
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Radio<String>(
-            fillColor:
-                MaterialStateColor.resolveWith((states) => Colors.orangeAccent),
-            value: 'private',
-            groupValue: _privacy,
-            onChanged: (privacy) {
-              setState(() {
-                _privacy = privacy;
-              });
-            },
-          ),
-          Text("Private"),
-        ]),
-      ],
+    return Padding(
+      padding: EdgeInsets.only(left: 20, right: 20),
+      child: Row(
+        children: [
+          Row(children: [
+            Radio<String>(
+              fillColor: MaterialStateColor.resolveWith(
+                  (states) => Colors.orangeAccent),
+              value: 'public',
+              groupValue: _privacy,
+              onChanged: (privacy) {
+                setState(() {
+                  _privacy = privacy;
+                });
+              },
+            ),
+            Text("Public"),
+          ]),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Radio<String>(
+              fillColor: MaterialStateColor.resolveWith(
+                  (states) => Colors.orangeAccent),
+              value: 'private',
+              groupValue: _privacy,
+              onChanged: (privacy) {
+                setState(() {
+                  _privacy = privacy;
+                });
+              },
+            ),
+            Text("Private"),
+          ]),
+        ],
+      ),
     );
   }
 
@@ -428,38 +437,52 @@ class _PostMemeState extends State<PostMeme> {
     );
   }
 
+  Future updated(StateSetter updateState) async {
+    updateState(() {});
+  }
+
   addPopup(context) {
-    return showModalBottomSheet(
+    showModalBottomSheet(
       backgroundColor: Colors.transparent,
       isDismissible: true,
       isScrollControlled: true,
       context: context,
       builder: (BuildContext context) {
-        return Padding(
-            padding: MediaQuery.of(context).viewInsets,
-            child: DraggableScrollableSheet(
-              initialChildSize: 0.9, //set this as you want
-              maxChildSize: 1.0, //set this as you want
-              minChildSize: 0.75, //set this as you want
-              expand: true,
-              builder: (context, scrollController) {
-                return Container(
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10),
+        return StatefulBuilder(builder: (context, state) {
+          return Padding(
+              padding: MediaQuery.of(context).viewInsets,
+              child: DraggableScrollableSheet(
+                initialChildSize: 0.9, //set this as you want
+                maxChildSize: 1.0, //set this as you want
+                minChildSize: 0.75, //set this as you want
+                expand: true,
+                builder: (context, scrollController) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                      ),
                     ),
-                  ),
-                  child: Form(
-                    key: _formKey,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Row(
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.only(
+                            left: 20,
+                            right: 20,
+                            top: 15,
+                            bottom: 15,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                color: Colors.grey.shade300,
+                                width: 1,
+                              ),
+                            ),
+                          ),
+                          child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -469,7 +492,7 @@ class _PostMemeState extends State<PostMeme> {
                                   Text(
                                     "Post a meme",
                                     style: TextStyle(
-                                      fontSize: 25,
+                                      fontSize: 20,
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
@@ -486,7 +509,7 @@ class _PostMemeState extends State<PostMeme> {
                                 onPressed: () {
                                   image = null;
                                   _formKey.currentState!.reset();
-                                  selecteFolder = null;
+                                  seelectedFolder = null;
                                   Navigator.of(context).pop();
                                 },
                                 icon: Icon(
@@ -495,101 +518,124 @@ class _PostMemeState extends State<PostMeme> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 15),
-                          SizedBox(
-                            child: InkWell(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      topRight: Radius.circular(10),
-                                      bottomLeft: Radius.circular(10),
-                                      bottomRight: Radius.circular(10)),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.2),
-                                      spreadRadius: 2,
-                                      blurRadius: 7,
-                                      offset: Offset(
-                                          0, 3), // changes position of shadow
+                        ),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: Form(
+                              key: _formKey,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  SizedBox(height: 15),
+                                  SizedBox(
+                                    child: InkWell(
+                                      child: Container(
+                                        margin: EdgeInsets.only(
+                                            left: 20, right: 20),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white54,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border(
+                                            bottom: BorderSide(
+                                              color: Colors.grey.shade300,
+                                              width: 1,
+                                            ),
+                                            top: BorderSide(
+                                              color: Colors.grey.shade300,
+                                              width: 1,
+                                            ),
+                                            right: BorderSide(
+                                              color: Colors.grey.shade300,
+                                              width: 1,
+                                            ),
+                                            left: BorderSide(
+                                              color: Colors.grey.shade300,
+                                              width: 1,
+                                            ),
+                                          ),
+                                        ),
+                                        child: image != null
+                                            ? Image.file(image!,
+                                                width: 160, height: 160)
+                                            : Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text("Please select image"),
+                                                  SizedBox(height: 18),
+                                                  Icon(
+                                                    Icons.image,
+                                                    size: 50.0,
+                                                    color: Colors.grey,
+                                                  )
+                                                ],
+                                              ),
+                                      ),
+                                      onTap: () => pickImage(),
                                     ),
-                                  ],
-                                ),
-                                padding: EdgeInsets.all(24),
-                                child: image != null
-                                    ? Image.file(image!,
-                                        width: 160, height: 160)
-                                    : Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text("Please select image"),
-                                          SizedBox(height: 18),
-                                          Icon(
-                                            Icons.image,
-                                            size: 50.0,
-                                            color: Colors.grey,
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 200,
+                                  ),
+                                  SizedBox(height: 20),
+                                  _buildDescription(),
+                                  SizedBox(height: 20),
+                                  _selectFolder(),
+                                  SizedBox(height: 20),
+                                  _buildTags(),
+                                  // _buildFolderId(),
+                                  SizedBox(height: 20),
+                                  _buildPrivacy(),
+                                  SizedBox(height: 20),
+                                  InkWell(
+                                    onTap: () => addPost(),
+                                    child: Container(
+                                      margin: EdgeInsets.only(
+                                          left: 20, right: 20, bottom: 20),
+                                      alignment: Alignment.center,
+                                      width: MediaQuery.of(context).size.width,
+                                      padding: EdgeInsets.only(
+                                        left: 30,
+                                        right: 30,
+                                        top: 10,
+                                        bottom: 10,
+                                      ),
+                                      child: Text(
+                                        'Post',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: _isSubmitting
+                                            ? Colors.grey[350]
+                                            : Colors.orangeAccent,
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.orangeAccent,
+                                            offset: Offset(6, 2),
+                                            blurRadius: 2.0,
                                           )
                                         ],
                                       ),
-                              ),
-                              onTap: () => pickImage(),
-                            ),
-                            width: MediaQuery.of(context).size.width,
-                            height: 200,
-                          ),
-                          SizedBox(height: 20),
-                          _buildDescription(),
-                          SizedBox(height: 20),
-                          _selectFolder(),
-                          SizedBox(height: 20),
-                          _buildTags(),
-                          // _buildFolderId(),
-                          SizedBox(height: 20),
-                          _buildPrivacy(),
-                          SizedBox(height: 20),
-                          InkWell(
-                            onTap: () => addPost(),
-                            child: Container(
-                              alignment: Alignment.center,
-                              width: MediaQuery.of(context).size.width,
-                              padding: EdgeInsets.only(
-                                left: 30,
-                                right: 30,
-                                top: 10,
-                                bottom: 10,
-                              ),
-                              child: Text(
-                                'Post',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              decoration: BoxDecoration(
-                                color: _isSubmitting
-                                    ? Colors.grey[350]
-                                    : Colors.orangeAccent,
-                                borderRadius: BorderRadius.circular(100),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.orangeAccent,
-                                    offset: Offset(6, 2),
-                                    blurRadius: 2.0,
-                                  )
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
                           ),
-                        ],
-                      ),
+                        )
+                      ],
                     ),
-                  ),
-                );
-              },
-            ));
+                  );
+                },
+              ));
+        });
       },
     );
   }

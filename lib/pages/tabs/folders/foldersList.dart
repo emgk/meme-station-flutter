@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:memestation/entities/jsonMap.dart';
 import 'package:memestation/pages/tabs/folders/addfolder.dart';
 import 'package:memestation/services/api_service.dart';
-import 'package:memestation/util/actionbuttons.dart';
 
 class FoldersList extends StatefulWidget {
   FoldersList({
@@ -74,13 +73,14 @@ class _FoldersListState extends State<FoldersList> {
           children: [
             Container(
               decoration: BoxDecoration(
+                color: Colors.white,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(10),
                   topRight: Radius.circular(10),
                 ),
               ),
               padding: EdgeInsets.only(
-                top: 20,
+                top: 10,
                 left: 20,
                 right: 20,
               ),
@@ -90,7 +90,7 @@ class _FoldersListState extends State<FoldersList> {
                   Text(
                     "Folders",
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
                     ),
@@ -101,13 +101,9 @@ class _FoldersListState extends State<FoldersList> {
             ),
             Container(
               decoration: BoxDecoration(
-                color: Colors.transparent,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                ),
+                color: Colors.white,
               ),
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.only(left: 20, right: 20, top: 0),
               child: Column(
                 children: [
                   !_user!.folders!.isNotEmpty
@@ -133,93 +129,111 @@ class _FoldersListState extends State<FoldersList> {
                             )
                           ],
                         )
-                      : ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: _folders!.length,
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                              onTap: () => {},
-                              child: Container(
-                                margin: const EdgeInsets.only(
-                                  top: 10,
-                                  bottom: 10,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      topRight: Radius.circular(10),
-                                      bottomLeft: Radius.circular(10),
-                                      bottomRight: Radius.circular(10)),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.2),
-                                      spreadRadius: 2,
-                                      blurRadius: 7,
-                                      offset: Offset(
-                                          0, 3), // changes position of shadow
+                      : Card(
+                          child: ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: _folders!.length,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onTap: () => {},
+                                child: Container(
+                                  margin: const EdgeInsets.only(
+                                    top: 5,
+                                    bottom: 5,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10),
                                     ),
-                                  ],
-                                ),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      margin: const EdgeInsets.only(
-                                        right: 20,
+                                    border: Border(
+                                      top: BorderSide(
+                                        color: Colors.grey.shade300,
+                                        width: 1,
                                       ),
-                                      alignment: Alignment.center,
-                                      height: 80,
-                                      child: Container(
-                                        width: 80,
-                                        height: 80,
-                                        child:
-                                            !_folders![index].memes!.isNotEmpty
-                                                ? Icon(
-                                                    Icons.image,
-                                                    color: Colors.black54,
-                                                  )
-                                                : Image.network(
+                                      bottom: BorderSide(
+                                        color: Colors.grey.shade300,
+                                        width: 1,
+                                      ),
+                                      left: BorderSide(
+                                        color: Colors.grey.shade300,
+                                        width: 1,
+                                      ),
+                                      right: BorderSide(
+                                        color: Colors.grey.shade300,
+                                        width: 1,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        margin: const EdgeInsets.only(
+                                          right: 20,
+                                        ),
+                                        alignment: Alignment.center,
+                                        height: 60,
+                                        child: Container(
+                                          width: 60,
+                                          height: 60,
+                                          child: !_folders![index]
+                                                  .memes!
+                                                  .isNotEmpty
+                                              ? Icon(
+                                                  Icons.image,
+                                                  color: Colors.black54,
+                                                )
+                                              : ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                    topLeft:
+                                                        Radius.circular(10),
+                                                    bottomLeft:
+                                                        Radius.circular(10),
+                                                  ),
+                                                  child: Image.network(
                                                     _folders![index]
                                                             .memes![0]
                                                             .imageUrl ??
                                                         '',
-                                                    fit: BoxFit.cover,
+                                                    fit: BoxFit.fill,
                                                     width: 80,
                                                   ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.black12,
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(10),
-                                            bottomLeft: Radius.circular(10),
+                                                ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.black12,
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(10),
+                                              bottomLeft: Radius.circular(10),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          _folders![index].title,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w500,
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            _folders![index].title,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(height: 3),
-                                        Text(
-                                          _folders![index].description,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(),
-                                        ),
-                                      ],
-                                    )
-                                  ],
+                                          SizedBox(height: 3),
+                                          Text(
+                                            _folders![index].description,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         )
                 ],
               ),

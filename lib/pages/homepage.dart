@@ -36,7 +36,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
+      extendBodyBehindAppBar: false,
       appBar: AppBar(
         // centerTitle: true,
         // leading: IconButton(
@@ -44,11 +45,8 @@ class _HomePageState extends State<HomePage> {
         //   onPressed: () => {},
         // ),
         title: Padding(
-          padding: EdgeInsets.only(top: 10),
-          child: SvgPicture.asset(
-            'assets/images/default-monochrome.svg',
-            height: 30,
-          ),
+          padding: EdgeInsets.all(0),
+          child: Text('Meme Station', style: TextStyle(color: Colors.black)),
         ),
         actions: [
           IconButton(
@@ -60,17 +58,20 @@ class _HomePageState extends State<HomePage> {
             onPressed: () => {},
           )
         ],
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.grey.shade100,
         // flexibleSpace: Container(
         //   decoration: BoxDecoration(
         //     gradient: LinearGradient(
-        //       colors: [Colors.black45, Colors.transparent],
+        //       colors: [
+        //         Colors.grey.shade300,
+        //         Colors.white,
+        //       ],
         //       begin: Alignment.topCenter,
         //       end: Alignment.bottomCenter,
         //     ),
         //   ),
         // ),
-        elevation: 0,
+        elevation: 1,
         // titleSpacing: 0,
       ),
       body: tabs[_currentTabIndex],

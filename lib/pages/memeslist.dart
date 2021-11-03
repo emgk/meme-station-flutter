@@ -66,7 +66,6 @@ class _MemesListState extends State<MemesList> {
 
     return RefreshIndicator(
         child: Container(
-          padding: EdgeInsets.all(10),
           child: SingleChildScrollView(
             child: Column(children: <Widget>[
               Visibility(
@@ -130,8 +129,8 @@ class _MemesListState extends State<MemesList> {
                     ],
                   ),
                   margin: const EdgeInsets.only(
-                    left: 5,
-                    right: 5,
+                    left: 15,
+                    right: 15,
                     top: 20,
                   ),
                   decoration: BoxDecoration(
@@ -144,9 +143,9 @@ class _MemesListState extends State<MemesList> {
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.2),
-                        spreadRadius: 2,
-                        blurRadius: 7,
-                        offset: Offset(0, 3), // changes position of shadow
+                        spreadRadius: 1,
+                        blurRadius: 20,
+                        offset: Offset(0, 1), // changes position of shadow
                       ),
                     ],
                   ),

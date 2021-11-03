@@ -19,6 +19,8 @@ class Meme {
   List<User>? user;
   List<Save>? save;
   List<Like>? like;
+  bool? isSaved;
+  bool? isLiked;
   DateTime? createdAt;
   DateTime? updatedAt;
 
@@ -32,6 +34,8 @@ class Meme {
     required this.imageUrl,
     required this.createdAt,
     required this.updatedAt,
+    required this.isSaved,
+    required this.isLiked,
     required this.user,
     required this.save,
     required this.like,
@@ -48,6 +52,8 @@ class Meme {
       imageUrl: json["imageUrl"],
       createdAt: DateTime.parse(json["createdAt"]),
       updatedAt: DateTime.parse(json["updatedAt"]),
+      isSaved: json["is_saved"],
+      isLiked: json["is_liked"],
       user: List<User>.from((json["user"] ?? []).map((x) => User.fromJson(x))),
       save: List<Save>.from((json["saved"] ?? []).map((x) => Save.fromJson(x))),
       like: List<Like>.from((json["likes"] ?? []).map((x) => Like.fromJson(x))),
@@ -62,6 +68,8 @@ class Meme {
         "tags": tags,
         "folderId": folderId,
         "imageUrl": imageUrl,
+        "isSaved": isSaved,
+        "isLiked": isLiked,
         "createdAt": createdAt?.toIso8601String(),
         "updatedAt": updatedAt?.toIso8601String(),
         "user": List<User>.from((user ?? []).map((x) => x.toJson())),

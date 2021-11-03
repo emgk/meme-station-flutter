@@ -1,13 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:memestation/pages/homepage.dart';
 import 'package:memestation/pages/login.dart';
 import 'package:memestation/services/api_service.dart';
-import 'package:memestation/util/notice.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -57,11 +51,12 @@ class _RegisterState extends State<Register> {
           ),
         );
 
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => Login()),
-        );
+        _formKey.currentState!.reset();
+        Navigator.of(context).pop();
       }
     }).catchError((e) {
+      _formKey.currentState!.reset();
+      Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to create account, please try again!'),
@@ -71,129 +66,384 @@ class _RegisterState extends State<Register> {
   }
 
   Widget _nameField() {
-    return TextFormField(
-      keyboardType: TextInputType.multiline,
-      decoration: InputDecoration(
-        labelText: 'Name',
-      ),
-      onSaved: (value) {
-        if (null != value) {
-          _name = value;
-        }
-      },
+    return Padding(
+      padding: EdgeInsets.only(left: 20, right: 20),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Name",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey,
+              ),
+            ),
+            SizedBox(height: 10),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white54,
+                borderRadius: BorderRadius.circular(20),
+                border: Border(
+                  bottom: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                  top: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                  right: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                  left: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.only(left: 20),
+                  border: InputBorder.none,
+                  hintText: 'Eg. John doe',
+                ),
+                keyboardType: TextInputType.multiline,
+                validator: (value) {
+                  if (null == value) {
+                    return 'Title is required';
+                  }
+                },
+                onSaved: (value) {
+                  if (null != value) {
+                    _name = value;
+                  }
+                },
+              ),
+            ),
+          ]),
     );
   }
 
   Widget _passwordField() {
-    return TextFormField(
-      keyboardType: TextInputType.multiline,
-      decoration: InputDecoration(
-        labelText: 'Password',
-      ),
-      onSaved: (value) {
-        if (null != value) {
-          _password = value;
-        }
-      },
+    return Padding(
+      padding: EdgeInsets.only(left: 20, right: 20),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Password",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey,
+              ),
+            ),
+            SizedBox(height: 10),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white54,
+                borderRadius: BorderRadius.circular(20),
+                border: Border(
+                  bottom: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                  top: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                  right: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                  left: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: TextFormField(
+                obscureText: true,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.only(left: 20),
+                  border: InputBorder.none,
+                ),
+                keyboardType: TextInputType.multiline,
+                validator: (value) {
+                  if (null == value) {
+                    return 'Password is required';
+                  }
+                },
+                onSaved: (value) {
+                  if (null != value) {
+                    _password = value;
+                  }
+                },
+              ),
+            ),
+          ]),
     );
   }
 
   Widget _emailField() {
-    return TextFormField(
-      keyboardType: TextInputType.multiline,
-      decoration: InputDecoration(
-        labelText: 'Email',
-      ),
-      onSaved: (value) {
-        if (null != value) {
-          _email = value;
-        }
-      },
+    return Padding(
+      padding: EdgeInsets.only(left: 20, right: 20),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Email",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey,
+              ),
+            ),
+            SizedBox(height: 10),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white54,
+                borderRadius: BorderRadius.circular(20),
+                border: Border(
+                  bottom: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                  top: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                  right: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                  left: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: TextFormField(
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.only(left: 20),
+                  border: InputBorder.none,
+                ),
+                validator: (value) {
+                  if (null == value) {
+                    return 'Password is required';
+                  }
+                },
+                onSaved: (value) {
+                  if (null != value) {
+                    _email = value;
+                  }
+                },
+              ),
+            ),
+          ]),
     );
   }
 
   Widget _genderField() {
-    return Row(
-      children: [
-        Row(children: [
-          Radio<String>(
-            value: 'male',
-            groupValue: _gender,
-            onChanged: (privacy) {
-              setState(() {
-                _gender = privacy;
-              });
-            },
-          ),
-          Text("Male"),
-        ]),
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Radio<String>(
-            value: 'female',
-            groupValue: _gender,
-            onChanged: (privacy) {
-              setState(() {
-                _gender = privacy;
-              });
-            },
-          ),
-          Text("Female"),
-        ]),
-      ],
+    return Padding(
+      padding: EdgeInsets.only(left: 20, right: 20),
+      child: Row(
+        children: [
+          Row(children: [
+            Radio<String>(
+              fillColor: MaterialStateColor.resolveWith(
+                  (states) => Colors.orangeAccent),
+              value: 'male',
+              groupValue: _gender,
+              onChanged: (privacy) {
+                setState(() {
+                  privacy = privacy;
+                });
+              },
+            ),
+            Text(
+              "Male",
+              style: TextStyle(color: Colors.orangeAccent),
+            ),
+          ]),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Radio<String>(
+              fillColor: MaterialStateColor.resolveWith(
+                  (states) => Colors.orangeAccent),
+              value: 'female',
+              groupValue: _gender,
+              onChanged: (privacy) {
+                setState(() {
+                  privacy = privacy;
+                });
+              },
+            ),
+            Text(
+              "Female",
+              style: TextStyle(color: Colors.orangeAccent),
+            ),
+          ]),
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        titleSpacing: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_left),
-          onPressed: () => {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (_) => Login(),
-              ),
-            )
-          },
-        ),
-        title: Text("Create new account"),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.blueGrey, Colors.blueGrey.shade800],
-              begin: Alignment.bottomRight,
-              end: Alignment.topLeft,
-            ),
-          ),
+    return GestureDetector(
+      child: Text(
+        "Create new account",
+        style: TextStyle(
+          color: Colors.black,
         ),
       ),
-      body: Container(
-        margin: EdgeInsets.all(24),
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                _nameField(),
-                _emailField(),
-                _passwordField(),
-                SizedBox(height: 20),
-                _genderField(),
-                MaterialButton(
-                  color: Colors.blueGrey,
-                  textColor: Colors.white,
-                  child: Text("Create"),
-                  onPressed: () => registerUser(),
-                )
-              ],
-            ),
+      onTap: () {
+        registerPopup(context);
+      },
+    );
+  }
+
+  void registerPopup(context) {
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      isDismissible: true,
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: MediaQuery.of(context).viewInsets,
+          child: DraggableScrollableSheet(
+            initialChildSize: 0.9, //set this as you want
+            maxChildSize: 1.0, //set this as you want
+            minChildSize: 0.75, //set this as you want
+            expand: true,
+            builder: (context, scrollController) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10),
+                  ),
+                ),
+                child: Column(children: [
+                  Container(
+                    padding: EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: Colors.grey.shade300,
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Create an account",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black,
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            Text(
+                              "Please enter details below",
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            _formKey.currentState!.reset();
+                            Navigator.of(context).pop();
+                          },
+                          icon: Icon(
+                            Icons.close_sharp,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Form(
+                        key: _formKey,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              SizedBox(height: 20),
+                              _nameField(),
+                              SizedBox(height: 20),
+                              _emailField(),
+                              SizedBox(height: 20),
+                              _passwordField(),
+                              SizedBox(height: 20),
+                              _genderField(),
+                              SizedBox(height: 20),
+                              Padding(
+                                padding: EdgeInsets.only(left: 20, right: 20),
+                                child: InkWell(
+                                  onTap: () => registerUser(),
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: EdgeInsets.only(
+                                      left: 30,
+                                      right: 30,
+                                      top: 10,
+                                      bottom: 10,
+                                    ),
+                                    child: Text(
+                                      'Create',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.orangeAccent,
+                                      borderRadius: BorderRadius.circular(100),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.orangeAccent,
+                                          offset: Offset(6, 2),
+                                          blurRadius: 2.0,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ]),
+              );
+            },
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

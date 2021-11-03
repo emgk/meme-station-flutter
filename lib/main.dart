@@ -20,7 +20,7 @@ class MemeStation extends StatelessWidget {
       title: "Meme Station",
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.white,
+        scaffoldBackgroundColor: Colors.grey.shade200,
       ),
       home: Splash(),
       navigatorKey: navigatorKey,
