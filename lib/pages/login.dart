@@ -24,16 +24,10 @@ class _LoginStates extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey,
+      backgroundColor: Colors.black38,
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
-          Image(
-            image: AssetImage("assets/images/app-background.jpg"),
-            fit: BoxFit.cover,
-            color: Colors.black87,
-            colorBlendMode: BlendMode.darken,
-          ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[

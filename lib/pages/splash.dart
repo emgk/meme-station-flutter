@@ -2,6 +2,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:memestation/pages/homepage.dart';
+import 'package:memestation/services/api_service.dart';
 
 import 'login.dart';
 
@@ -15,7 +17,18 @@ class _SplashState extends State<Splash> {
   void initState() {
     super.initState();
 
-    Timer(Duration(seconds: 3), () {
+    getCurrentUser().whenComplete(() {
+      setState(() {});
+    });
+  }
+
+  Future getCurrentUser() async {
+    return await APIService.getLoggedUser().then((user) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => HomePage()),
+      );
+    }).catchError((err) {
+      // Redirect to login if failed
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => Login()),
       );

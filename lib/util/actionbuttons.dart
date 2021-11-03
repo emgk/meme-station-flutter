@@ -1,107 +1,25 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, file_names, prefer_const_constructors_in_immutables, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:memestation/entities/jsonMap.dart';
-import 'package:memestation/pages/tabs/folders/addfolder.dart';
-import 'package:memestation/services/api_service.dart';
-import 'package:memestation/util/actionbuttons.dart';
 
-class FoldersList extends StatefulWidget {
-  FoldersList({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  _FoldersListState createState() => _FoldersListState();
-}
-
-class _FoldersListState extends State<FoldersList> {
-  User? _user;
-  List<Folder>? _folders;
-
-  late GlobalKey<RefreshIndicatorState> refreshKey;
-
-  @override
-  void initState() {
-    super.initState();
-
-    refreshKey = GlobalKey<RefreshIndicatorState>();
-
-    loadFolders().whenComplete(() {
-      setState(() {});
-    });
-
-    getCurrentUser().whenComplete(() {
-      setState(() {});
-    });
-  }
-
-  static GlobalKey _globalKey = GlobalKey();
-
-  Future loadFolders() async {
-    return await APIService.getFolders().then((folders) {
-      _folders = folders;
-    });
-  }
-
-  Future getCurrentUser() async {
-    return await APIService.getLoggedUser().then((user) {
-      _user = user;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (null == _user) {
-      return SizedBox(
-        height: MediaQuery.of(context).size.height * 0.7,
-        child: Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation(Colors.black),
-            strokeWidth: 5.0,
-          ),
-        ),
-      );
-    }
-
-    return RefreshIndicator(
-      onRefresh: () async {
-        await loadFolders();
-      },
-      child: SingleChildScrollView(
-        physics: ScrollPhysics(),
-        child: Column(
-          children: [
-            Container(
+void folderPicker(context, folders, onPick) {
+  showModalBottomSheet(
+    backgroundColor: Colors.transparent,
+    isDismissible: true,
+    isScrollControlled: true,
+    context: context,
+    builder: (BuildContext context) {
+      return DraggableScrollableSheet(
+        initialChildSize: 0.75, //set this as you want
+        maxChildSize: 0.75, //set this as you want
+        minChildSize: 0.75, //set this as you want
+        expand: true,
+        builder: (context, scrollController) {
+          return SingleChildScrollView(
+            physics: ScrollPhysics(),
+            child: Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                ),
-              ),
-              padding: EdgeInsets.only(
-                top: 20,
-                left: 20,
-                right: 20,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Folders",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  AddFolder(),
-                ],
-              ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.transparent,
+                color: Colors.white,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(10),
                   topRight: Radius.circular(10),
@@ -110,7 +28,38 @@ class _FoldersListState extends State<FoldersList> {
               padding: EdgeInsets.all(20),
               child: Column(
                 children: [
-                  !_user!.folders!.isNotEmpty
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Save to folder",
+                            style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Text(
+                            "Please select folder below",
+                            style: TextStyle(
+                              fontSize: 15,
+                            ),
+                          ),
+                          SizedBox(height: 15),
+                        ],
+                      ),
+                      IconButton(
+                        onPressed: () => {Navigator.of(context).pop()},
+                        icon: Icon(
+                          Icons.close_sharp,
+                        ),
+                      ),
+                    ],
+                  ),
+                  !folders.isNotEmpty
                       ? Column(
                           children: [
                             Center(
@@ -136,10 +85,13 @@ class _FoldersListState extends State<FoldersList> {
                       : ListView.builder(
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
-                          itemCount: _folders!.length,
+                          itemCount: folders.length,
                           itemBuilder: (context, index) {
                             return GestureDetector(
-                              onTap: () => {},
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                onPick(folders[index]);
+                              },
                               child: Container(
                                 margin: const EdgeInsets.only(
                                   top: 10,
@@ -166,26 +118,25 @@ class _FoldersListState extends State<FoldersList> {
                                   children: [
                                     Container(
                                       margin: const EdgeInsets.only(
-                                        right: 20,
+                                        right: 10,
                                       ),
                                       alignment: Alignment.center,
-                                      height: 80,
+                                      height: 60,
                                       child: Container(
-                                        width: 80,
-                                        height: 80,
+                                        width: 60,
+                                        height: 60,
                                         child:
-                                            !_folders![index].memes!.isNotEmpty
+                                            !folders![index].memes!.isNotEmpty
                                                 ? Icon(
                                                     Icons.image,
                                                     color: Colors.black54,
                                                   )
                                                 : Image.network(
-                                                    _folders![index]
-                                                            .memes![0]
-                                                            .imageUrl ??
-                                                        '',
+                                                    folders![index]
+                                                        .memes![0]
+                                                        .imageUrl,
                                                     fit: BoxFit.cover,
-                                                    width: 80,
+                                                    width: 60,
                                                   ),
                                         decoration: BoxDecoration(
                                           color: Colors.black12,
@@ -201,7 +152,7 @@ class _FoldersListState extends State<FoldersList> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          _folders![index].title,
+                                          folders![index].title,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
                                             fontWeight: FontWeight.w500,
@@ -209,9 +160,11 @@ class _FoldersListState extends State<FoldersList> {
                                         ),
                                         SizedBox(height: 3),
                                         Text(
-                                          _folders![index].description,
+                                          folders![index].description,
                                           overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(),
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                          ),
                                         ),
                                       ],
                                     )
@@ -223,10 +176,10 @@ class _FoldersListState extends State<FoldersList> {
                         )
                 ],
               ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
+            ),
+          );
+        },
+      );
+    },
+  );
 }

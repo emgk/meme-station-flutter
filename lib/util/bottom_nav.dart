@@ -21,22 +21,7 @@ class BottomNav extends StatelessWidget {
           size: Size(MediaQuery.of(context).size.width, 80),
           painter: BottomCustomPainer(),
         ),
-        Center(
-          heightFactor: 0.6,
-          child: FloatingActionButton(
-            onPressed: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => PostMeme()),
-              );
-            },
-            backgroundColor: Colors.grey.shade600,
-            child: Icon(
-              Icons.upload_rounded,
-              color: Colors.black,
-            ),
-            elevation: 10,
-          ),
-        ),
+        PostMeme(),
         SizedBox(
           width: MediaQuery.of(context).size.width,
           height: 80,
@@ -46,7 +31,8 @@ class BottomNav extends StatelessWidget {
               IconButton(
                 icon: Icon(
                   Icons.home,
-                  color: 0 == currentTabIndex ? Colors.blue : Colors.white,
+                  color:
+                      0 == currentTabIndex ? Colors.orangeAccent : Colors.grey,
                 ),
                 onPressed: () {
                   switchTab(0);
@@ -54,7 +40,9 @@ class BottomNav extends StatelessWidget {
               ),
               IconButton(
                 icon: Icon(Icons.bookmark,
-                    color: 1 == currentTabIndex ? Colors.blue : Colors.white),
+                    color: 1 == currentTabIndex
+                        ? Colors.orangeAccent
+                        : Colors.grey),
                 onPressed: () {
                   switchTab(1);
                 },
@@ -64,14 +52,18 @@ class BottomNav extends StatelessWidget {
               ),
               IconButton(
                 icon: Icon(Icons.public,
-                    color: 2 == currentTabIndex ? Colors.blue : Colors.white),
+                    color: 2 == currentTabIndex
+                        ? Colors.orangeAccent
+                        : Colors.grey),
                 onPressed: () {
                   switchTab(2);
                 },
               ),
               IconButton(
                 icon: Icon(Icons.person,
-                    color: 3 == currentTabIndex ? Colors.blue : Colors.white),
+                    color: 3 == currentTabIndex
+                        ? Colors.orangeAccent
+                        : Colors.grey),
                 onPressed: () {
                   switchTab(3);
                 },
@@ -88,7 +80,7 @@ class BottomCustomPainer extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
-      ..color = Colors.black87
+      ..color = Colors.white
       ..style = PaintingStyle.fill;
     Path path = Path()..moveTo(0, 20);
 
@@ -103,7 +95,7 @@ class BottomCustomPainer extends CustomPainter {
     path.lineTo(0, size.height);
     path.close();
 
-    canvas.drawShadow(path, Colors.black, 5, true);
+    canvas.drawShadow(path, Colors.black, 30, true);
     canvas.drawPath(path, paint);
   }
 

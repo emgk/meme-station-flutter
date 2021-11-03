@@ -1,12 +1,14 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_constructors_in_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_constructors_in_immutables, prefer_const_literals_to_create_immutables
 
 import 'dart:async';
 
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gravatar/flutter_gravatar.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:memestation/entities/jsonMap.dart';
 import 'package:memestation/services/api_service.dart';
+import 'package:memestation/util/actionbuttons.dart';
 import 'package:memestation/util/share.dart';
 
 class MemeCard extends StatefulWidget {
@@ -25,21 +27,86 @@ class MemeCard extends StatefulWidget {
 
 class _MemeCardState extends State<MemeCard> {
   bool saved = false;
+  bool liked = false;
   bool showBookmartOverlay = false;
+  bool _isLocked = false;
 
-  Future _toggleSave() async {
+  @override
+  void initState() {
+    super.initState();
+
+    var savedPosts = widget.meme.save!.where((s) => s.userId == widget.user.id);
+
+    if (savedPosts.isNotEmpty) {
+      setState(() {
+        saved = true;
+      });
+    }
+
+    var likedPosts = widget.meme.like!.where((s) => s.userId == widget.user.id);
+    if (likedPosts.isNotEmpty) {
+      setState(() {
+        liked = true;
+      });
+    }
+  }
+
+  Future _toggleSave(folderId) async {
     // payload
     Map<String, dynamic> data = {
       'userId': widget.user.id,
       'memeId': widget.meme.id,
-      'folderId': 0,
+      'folderId': folderId,
     };
 
-    await APIService.saveMeme(data).then((response) {
+    if (_isLocked) {
+      return;
+    }
+
+    setState(() => {_isLocked = true});
+
+    await ('' == folderId
+            ? APIService.unSaveMeme(data)
+            : APIService.saveMeme(data))
+        .then((response) {
+      if (response!.statusCode == 200) {
+        setState(() {
+          saved = !saved;
+          _isLocked = false;
+        });
+      }
+    }).catchError((e) {
+      setState(() {
+        _isLocked = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed, please try again!'),
+        ),
+      );
+    });
+  }
+
+  Future _toggleLike() async {
+    // payload
+    Map<String, dynamic> data = {
+      'userId': widget.user.id,
+      'memeId': widget.meme.id,
+    };
+
+    if (_isLocked) {
+      return;
+    }
+
+    setState(() => {_isLocked = true});
+
+    await (liked ? APIService.unLikeMeme(data) : APIService.likeMeme(data))
+        .then((response) {
       if (response!.statusCode == 200) {
         setState(() {
           showBookmartOverlay = true;
-          saved = !saved;
+          liked = !liked;
+          _isLocked = false;
           if (showBookmartOverlay) {
             Timer(const Duration(milliseconds: 500), () {
               setState(() {
@@ -50,9 +117,10 @@ class _MemeCardState extends State<MemeCard> {
         });
       }
     }).catchError((e) {
+      setState(() => {_isLocked = false});
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to save meme!'),
+          content: Text('Failed, please try again!'),
         ),
       );
     });
@@ -100,7 +168,9 @@ class _MemeCardState extends State<MemeCard> {
             ),
           ),
           GestureDetector(
-            onDoubleTap: () => _toggleSave(),
+            onDoubleTap: () {
+              _toggleLike();
+            },
             child: Stack(
               alignment: Alignment.center,
               children: [
@@ -112,7 +182,7 @@ class _MemeCardState extends State<MemeCard> {
                 ),
                 showBookmartOverlay
                     ? Icon(
-                        saved ? Icons.bookmark : Icons.bookmark_outline,
+                        liked ? EvaIcons.heart : EvaIcons.heartOutline,
                         color: Colors.white,
                         size: 80.0,
                       )
@@ -140,7 +210,7 @@ class _MemeCardState extends State<MemeCard> {
                           borderRadius: BorderRadius.circular(8.0),
                           child: Image.network(
                             Gravatar(
-                              widget.meme.userData![0].email ?? '',
+                              widget.meme.user![0].email ?? '',
                             ).imageUrl(),
                             height: 50.0,
                             width: 50.0,
@@ -152,13 +222,13 @@ class _MemeCardState extends State<MemeCard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.meme.userData![0].name ?? '',
+                          widget.meme.user![0].name ?? '',
                           style: TextStyle(
                             fontWeight: FontWeight.w800,
                           ),
                         ),
                         Text(
-                          (Jiffy(widget.meme.userData![0].createdAt).fromNow()),
+                          (Jiffy(widget.meme.user![0].createdAt).fromNow()),
                           style: TextStyle(
                             fontWeight: FontWeight.w400,
                           ),
@@ -185,7 +255,24 @@ class _MemeCardState extends State<MemeCard> {
                             : Icons.bookmark_outline_outlined,
                         color: saved ? Colors.blue : Colors.black,
                       ),
-                      onPressed: () => {_toggleSave()},
+                      onPressed: () {
+                        if (!saved) {
+                          folderPicker(context, widget.user.folders, (data) {
+                            _toggleSave(data.id);
+                          });
+                        } else {
+                          _toggleSave('');
+                        }
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        liked ? EvaIcons.heart : EvaIcons.heartOutline,
+                        color: liked ? Colors.red : Colors.black,
+                      ),
+                      onPressed: () {
+                        _toggleLike();
+                      },
                     ),
                   ],
                 )

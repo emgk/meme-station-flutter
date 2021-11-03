@@ -71,6 +71,93 @@ class APIService {
     }
   }
 
+  static Future unSaveMeme(
+    Map<String, dynamic> data,
+  ) async {
+    var memeId = data['memeId'];
+    String url = "$baseUrl/save/$memeId";
+
+    try {
+      // get access token
+      String token = await getAccessToken();
+
+      final response = await dio.delete(
+        url,
+        data: {},
+        options: Options(
+          headers: {
+            "accept": "*/*",
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      return response;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  static Future likeMeme(
+    Map<String, dynamic> data,
+  ) async {
+    String url = "$baseUrl/likes";
+
+    try {
+      // get access token
+      String token = await getAccessToken();
+
+      final response = await dio.post(
+        url,
+        data: json.encode({
+          "memeId": data['memeId'],
+        }),
+        options: Options(
+          headers: {
+            "accept": "*/*",
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      print(response);
+
+      return response;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  static Future unLikeMeme(
+    Map<String, dynamic> data,
+  ) async {
+    var memeId = data['memeId'];
+    String url = "$baseUrl/likes/$memeId";
+
+    print(data);
+
+    try {
+      // get access token
+      String token = await getAccessToken();
+
+      final response = await dio.delete(
+        url,
+        data: {},
+        options: Options(
+          headers: {
+            "accept": "*/*",
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      return response;
+    } catch (e) {
+      print(e);
+      throw Exception(e);
+    }
+  }
+
   // register user
   static Future login(String email, String password) async {
     String url = "$baseUrl/user-login";
@@ -107,13 +194,13 @@ class APIService {
         options: Options(
           headers: {
             "accept": "*/*",
-            "Content-Type": "application/json",
             "Authorization": "Bearer $token",
           },
         ),
       );
 
       var apiResponJson = json.decode(jsonEncode(response.data));
+
       return User.fromJson(apiResponJson);
     } catch (e) {
       throw Exception(e);
@@ -199,6 +286,43 @@ class APIService {
     }
   }
 
+  static Future<List<Folder>> getFolders(
+      // Map<String, dynamic> params,
+      ) async {
+    String url = "$baseUrl/folders";
+
+    try {
+      // get access token
+      String token = await getAccessToken();
+
+      final response = await dio.get(
+        url,
+        options: Options(
+          headers: {
+            "accept": "*/*",
+            "Content-Type": "application/json",
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        var apiResponJson = json.decode(jsonEncode(response.data));
+        List<Folder> folders = [];
+
+        for (var prod in apiResponJson) {
+          folders.add(Folder.fromJson(prod));
+        }
+
+        return folders;
+      } else {
+        throw Exception('Failed!');
+      }
+    } catch (e) {
+      throw Exception('$e');
+    }
+  }
+
   // post new meme
   static Future postMeme(
     Map<String, dynamic> data,
@@ -234,6 +358,41 @@ class APIService {
           headers: {
             "accept": "*/*",
             // "Content-Type": "multipart/form-data",
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      return response;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  // post new meme
+  static Future addFolder(
+    Map<String, dynamic> data,
+  ) async {
+    String url = "$baseUrl/folders";
+
+    try {
+      // build form data
+      FormData formData = FormData.fromMap({
+        "userId": data['userId'],
+        "title": data['title'],
+        "description": data['description'],
+        "privacy": data['privacy'],
+      });
+
+      // get access token
+      String token = await getAccessToken();
+
+      Response response = await dio.post(
+        url,
+        data: formData,
+        options: Options(
+          headers: {
+            "accept": "*/*",
             "Authorization": "Bearer $token",
           },
         ),

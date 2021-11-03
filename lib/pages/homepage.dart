@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:memestation/pages/memeslist.dart';
+import 'package:memestation/pages/tabs/folders/foldersList.dart';
 import 'package:memestation/util/bottom_nav.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,7 +16,7 @@ class _HomePageState extends State<HomePage> {
 
   final tabs = [
     MemesList(),
-    Center(child: Text("Folder")),
+    FoldersList(),
     Center(child: Text("Global")),
     Center(child: Text("Profile")),
   ];
@@ -29,8 +30,6 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _currentTabIndex = tabId;
     });
-
-    print("_currentTabIndex $_currentTabIndex");
   }
 
   @override
