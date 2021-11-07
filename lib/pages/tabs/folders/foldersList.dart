@@ -1,10 +1,12 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, file_names, prefer_const_constructors_in_immutables, prefer_const_literals_to_create_immutables
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, file_names, prefer_const_constructors_in_immutables, prefer_const_literals_to_create_immutables, unused_label
 
 import 'package:flutter/material.dart';
 import 'package:memestation/entities/jsonMap.dart';
 import 'package:memestation/pages/tabs/folders/addfolder.dart';
+import 'package:memestation/pages/tabs/folders/folderview.dart';
 import 'package:memestation/services/api_service.dart';
 import 'package:memestation/shared/foldercard.dart';
+import 'package:memestation/shared/loader.dart';
 import 'package:memestation/shared/slideup.dart';
 
 class FoldersList extends StatefulWidget {
@@ -17,146 +19,151 @@ class FoldersList extends StatefulWidget {
 }
 
 class _FoldersListState extends State<FoldersList> {
-  User? _user;
-  List<Folder>? _folders;
+  List<Folder>? folders;
+  String? folderId;
 
   late GlobalKey<RefreshIndicatorState> refreshKey;
 
-  @override
-  void initState() {
-    super.initState();
-
-    refreshKey = GlobalKey<RefreshIndicatorState>();
-
-    loadFolders().whenComplete(() {
-      setState(() {});
-    });
-
-    getCurrentUser().whenComplete(() {
-      setState(() {});
-    });
-  }
-
-  static GlobalKey _globalKey = GlobalKey();
-
-  Future loadFolders() async {
+  Future getFolders() async {
     return await APIService.getFolders().then((folders) {
-      _folders = folders;
-    });
-  }
-
-  Future getCurrentUser() async {
-    return await APIService.getLoggedUser().then((user) {
-      _user = user;
+      setState(() {
+        folders = folders;
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (null == _user) {
-      return SizedBox(
-        height: MediaQuery.of(context).size.height * 0.7,
-        child: Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation(Colors.black),
-            strokeWidth: 5.0,
-          ),
-        ),
+    if (null != folderId) {
+      return FolderView(
+        folderId: folderId ?? '',
+        onBack: () {
+          setState(() {
+            folderId = null;
+          });
+        },
       );
     }
 
     return RefreshIndicator(
       onRefresh: () async {
-        await loadFolders();
+        await getFolders();
       },
-      child: SingleChildScrollView(
-        physics: ScrollPhysics(),
-        child: Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                ),
-              ),
-              padding: EdgeInsets.all(20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Folders",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  SlideUp(
-                    title: 'Create new folder',
-                    description: 'Please enter details below',
-                    child: AddFolder(),
-                    trigger: Icon(
-                      Icons.add_circle,
-                      color: Colors.black87,
-                      size: 30,
-                    ),
-                  ),
-                ],
-              ),
+      child: Column(
+        children: [
+          SingleChildScrollView(
+            physics: ScrollPhysics(),
+            child: FutureBuilder<List<dynamic>>(
+              future: APIService.getFolders(),
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                    return Text('Press button to start');
+                  case ConnectionState.waiting:
+                    return screenLoader(context);
+                  default:
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      return Column(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10),
+                              ),
+                            ),
+                            padding: EdgeInsets.only(left: 20, right: 20),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Folders",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                SlideUp(
+                                  title: 'Create new folder',
+                                  description: 'Please enter details below',
+                                  child: AddFolder(),
+                                  trigger: Icon(
+                                    Icons.add_circle,
+                                    color: Colors.black87,
+                                    size: 30,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                            ),
+                            margin: const EdgeInsets.only(
+                              bottom: 0,
+                            ),
+                            padding:
+                                EdgeInsets.only(left: 20, right: 20, top: 0),
+                            child: tabContent(snapshot.data, setState),
+                          ),
+                        ],
+                      );
+                    }
+                }
+              },
             ),
-            tabContent()
-          ],
-        ),
+          )
+        ],
       ),
     );
   }
 
-  Container tabContent() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-      ),
-      margin: const EdgeInsets.only(
-        bottom: 20,
-      ),
-      padding: EdgeInsets.only(left: 20, right: 20, top: 0),
-      child: Column(
+  tabContent(data, setState) {
+    onPick(Folder folder) {
+      folderId = folder.id;
+      setState(() {
+        folderId:
+        folder.id;
+      });
+    }
+
+    if (!data!.isNotEmpty) {
+      return Column(
         children: [
-          !_user!.folders!.isNotEmpty
-              ? Column(
-                  children: [
-                    Center(
-                      child: Column(
-                        children: [
-                          SizedBox(height: 50),
-                          Icon(
-                            Icons.folder,
-                            size: 50,
-                            color: Colors.grey,
-                          ),
-                          Text(
-                            "No folder",
-                            style: TextStyle(
-                              fontSize: 15,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                )
-              : ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: _folders!.length,
-                  itemBuilder: (context, index) {
-                    return cardElement(_folders![index], () {});
-                  },
-                )
+          Center(
+            child: Column(
+              children: [
+                SizedBox(height: 50),
+                Icon(
+                  Icons.folder,
+                  size: 50,
+                  color: Colors.grey,
+                ),
+                Text(
+                  "No folder",
+                  style: TextStyle(
+                    fontSize: 15,
+                  ),
+                ),
+              ],
+            ),
+          )
         ],
-      ),
+      );
+    }
+
+    return ListView.builder(
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: data!.length,
+      itemBuilder: (context, index) {
+        return cardElement(data![index], onPick);
+      },
     );
   }
 }

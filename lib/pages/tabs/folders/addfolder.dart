@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:memestation/services/api_service.dart';
 import 'package:memestation/shared/formui.dart';
+import 'package:memestation/util/extras.dart';
 
 class AddFolder extends StatefulWidget {
   @override
@@ -45,7 +46,7 @@ class _AddFolderState extends State<AddFolder> {
       // API request
       await APIService.addFolder(
         output,
-      ).then((response) {
+      ).then((response) async {
         if (response!.statusCode == 200) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -55,7 +56,9 @@ class _AddFolderState extends State<AddFolder> {
         }
 
         _formKey.currentState!.reset();
-        Navigator.of(context).pop();
+        Navigator.of(context).pop({
+          "force-reload": generateRandomString(5),
+        });
       }).catchError((e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -64,7 +67,9 @@ class _AddFolderState extends State<AddFolder> {
         );
 
         _formKey.currentState!.reset();
-        Navigator.of(context).pop();
+        Navigator.of(context).pop({
+          "force-reload": generateRandomString(5),
+        });
       });
     });
   }
@@ -174,7 +179,10 @@ class _AddFolderState extends State<AddFolder> {
             SizedBox(height: 20),
             FormButton(
               label: "Publish",
-              onClick: addPost,
+              onClick: () {
+                addPost();
+                setState(() {});
+              },
             )
           ],
         ),

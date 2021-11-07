@@ -9,12 +9,13 @@ import 'package:jiffy/jiffy.dart';
 import 'package:memestation/entities/jsonMap.dart';
 import 'package:memestation/services/api_service.dart';
 import 'package:memestation/shared/pickfolder.dart';
+import 'package:memestation/util/iconanimation.dart';
 import 'package:memestation/util/share.dart';
 
 class MemeCard extends StatefulWidget {
   final Meme meme;
   final User user;
-  final List<Folder> folders;
+  final dynamic folders;
 
   MemeCard({
     Key? key,
@@ -102,13 +103,6 @@ class _MemeCardState extends State<MemeCard> {
           showBookmartOverlay = true;
           liked = !liked;
           _isLocked = false;
-          if (showBookmartOverlay) {
-            Timer(const Duration(milliseconds: 500), () {
-              setState(() {
-                showBookmartOverlay = false;
-              });
-            });
-          }
         });
       }
     }).catchError((e) {
@@ -127,7 +121,7 @@ class _MemeCardState extends State<MemeCard> {
       margin: const EdgeInsets.only(
         left: 15,
         right: 15,
-        top: 20,
+        bottom: 15,
       ),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -182,25 +176,43 @@ class _MemeCardState extends State<MemeCard> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  FittedBox(
-                    fit: BoxFit.fill,
-                    child: Image.network(
-                      widget.meme.imageUrl.toString(),
+                  Container(
+                    color: Colors.black,
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: Image.network(
+                        widget.meme.imageUrl.toString(),
+                        fit: BoxFit.fitHeight,
+                      ),
                     ),
                   ),
-                  showBookmartOverlay
-                      ? Icon(
-                          liked ? EvaIcons.heart : EvaIcons.heartOutline,
-                          color: Colors.white,
-                          size: 80.0,
-                        )
-                      : Container(),
+                  Opacity(
+                    opacity: showBookmartOverlay ? 1 : 0,
+                    child: IconAnimation(
+                      isAnimating: showBookmartOverlay,
+                      duration: Duration(milliseconds: 1500),
+                      child: Icon(
+                        liked ? EvaIcons.heart : EvaIcons.heartOutline,
+                        color: Colors.white,
+                        size: 100,
+                      ),
+                      onEnd: () => {
+                        setState(() {
+                          showBookmartOverlay = false;
+                        })
+                      },
+                    ),
+                  )
                 ],
               ),
             ),
           ),
           Container(
-            padding: EdgeInsets.all(5),
+            padding: EdgeInsets.only(
+              left: 5,
+              right: 5,
+              bottom: 5,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -234,7 +246,8 @@ class _MemeCardState extends State<MemeCard> {
                         Text(
                           (Jiffy(widget.meme.user![0].createdAt).fromNow()),
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 10,
+                            color: Colors.grey,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -262,22 +275,30 @@ class _MemeCardState extends State<MemeCard> {
                       ),
                       onPressed: () {
                         if (!saved) {
-                          folderPicker(context, widget.folders, (data) {
-                            _toggleSave(data.id);
-                          });
+                          folderPicker(
+                            context,
+                            widget.folders,
+                            (data) {
+                              _toggleSave(data.id);
+                            },
+                          );
                         } else {
                           _toggleSave('');
                         }
                       },
                     ),
-                    IconButton(
-                      icon: Icon(
-                        liked ? EvaIcons.heart : EvaIcons.heartOutline,
-                        color: liked ? Colors.red : Colors.black,
+                    IconAnimation(
+                      alwaysAnimate: true,
+                      child: IconButton(
+                        icon: Icon(
+                          liked ? EvaIcons.heart : EvaIcons.heartOutline,
+                          color: liked ? Colors.red : Colors.black,
+                        ),
+                        onPressed: () {
+                          _toggleLike();
+                        },
                       ),
-                      onPressed: () {
-                        _toggleLike();
-                      },
+                      isAnimating: liked,
                     ),
                   ],
                 )

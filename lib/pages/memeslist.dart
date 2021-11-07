@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gravatar/flutter_gravatar.dart';
 import 'package:memestation/entities/jsonMap.dart';
 import 'package:memestation/pages/login.dart';
+import 'package:memestation/pages/postmeme.dart';
 import 'package:memestation/services/api_service.dart';
+import 'package:memestation/shared/loader.dart';
 import 'package:memestation/shared/memecard.dart';
+import 'package:memestation/shared/slideup.dart';
 
 class MemesList extends StatefulWidget {
   @override
@@ -14,7 +17,6 @@ class MemesList extends StatefulWidget {
 class _MemesListState extends State<MemesList> {
   User? _user;
   List<Meme>? _memes;
-  List<Folder>? _folders;
 
   Map<String, dynamic> params = {};
 
@@ -33,26 +35,14 @@ class _MemesListState extends State<MemesList> {
     getCurrentUser().whenComplete(() {
       setState(() {});
     });
-
-    loadFolders().whenComplete(() {
-      setState(() {});
-    });
   }
 
   static GlobalKey _globalKey = GlobalKey();
 
   Future loadMemes() async {
-    return await APIService.getMemes(params).then((memes) {
+    return await APIService.getMemes().then((memes) {
       setState(() {
         _memes = memes;
-      });
-    });
-  }
-
-  Future loadFolders() async {
-    return await APIService.getFolders().then((folders) {
-      setState(() {
-        _folders = folders;
       });
     });
   }
@@ -65,125 +55,154 @@ class _MemesListState extends State<MemesList> {
 
   @override
   Widget build(BuildContext context) {
-    if (null == _memes) {
-      return SizedBox(
-        height: MediaQuery.of(context).size.height * 0.7,
-        child: Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation(Colors.black),
-            strokeWidth: 5.0,
-          ),
-        ),
-      );
-    }
-
     return RefreshIndicator(
-        child: Container(
-          child: SingleChildScrollView(
-            child: Column(children: <Widget>[
-              Visibility(
-                visible: null != _user,
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  width: MediaQuery.of(context).size.width,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
-                            child: Image.network(
-                              Gravatar(_user?.email ?? 'test@example.com')
-                                  .imageUrl(),
-                              height: 50.0,
-                              width: 50.0,
-                            ),
+      child: Container(
+        child: SingleChildScrollView(
+          child: FutureBuilder<List<dynamic>>(
+            future: Future.wait([
+              APIService.getMemes(),
+              APIService.getLoggedUser(),
+              APIService.getFolders(),
+            ]),
+            builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                  return Text('Press button to start');
+                case ConnectionState.waiting:
+                  return screenLoader(context);
+                default:
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return Column(
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.only(
+                            top: 5,
+                            bottom: 5,
+                            left: 15,
+                            right: 15,
                           ),
-                          SizedBox(width: 20),
-                          Column(
+                          width: MediaQuery.of(context).size.width,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                _user?.name ?? "",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black,
-                                ),
-                              )
+                              Row(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    child: Image.network(
+                                      Gravatar(snapshot.data![1]?.email)
+                                          .imageUrl(),
+                                      height: 30.0,
+                                      width: 30.0,
+                                    ),
+                                  ),
+                                  SizedBox(width: 15),
+                                  Column(
+                                    children: [
+                                      Text(
+                                        "Welcome " + snapshot.data![1]?.name,
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  SlideUp(
+                                    title: 'Post a meme',
+                                    description: 'Please enter details below',
+                                    child: PostMeme(),
+                                    trigger: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.upload_rounded,
+                                          size: 20,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(width: 10),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.logout,
+                                      size: 20,
+                                    ),
+                                    onPressed: () async {
+                                      await APIService.logout(() {
+                                        // show alert
+                                        // ScaffoldMessenger.of(context).showSnackBar(
+                                        //   SnackBar(
+                                        //     content: Text("Logged out successfully!"),
+                                        //   ),
+                                        // );
+                                        Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(
+                                              builder: (_) => Login()),
+                                        );
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.settings),
-                            onPressed: () => {},
+                          margin: const EdgeInsets.only(
+                            left: 15,
+                            right: 15,
+                            top: 15,
                           ),
-                          IconButton(
-                            icon: Icon(Icons.logout),
-                            onPressed: () async {
-                              await APIService.logout(() {
-                                // show alert
-                                // ScaffoldMessenger.of(context).showSnackBar(
-                                //   SnackBar(
-                                //     content: Text("Logged out successfully!"),
-                                //   ),
-                                // );
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(builder: (_) => Login()),
-                                );
-                              });
-                            },
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10),
+                                bottomLeft: Radius.circular(10),
+                                bottomRight: Radius.circular(10)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 1,
+                                blurRadius: 20,
+                                offset:
+                                    Offset(0, 1), // changes position of shadow
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  margin: const EdgeInsets.only(
-                    left: 15,
-                    right: 15,
-                    top: 20,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10),
-                        bottomRight: Radius.circular(10)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        spreadRadius: 1,
-                        blurRadius: 20,
-                        offset: Offset(0, 1), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              ListView.builder(
-                primary: false,
-                shrinkWrap: true,
-                itemCount: _memes!.length,
-                itemBuilder: (context, index) {
-                  if (null != _memes &&
-                      _memes!.isNotEmpty &&
-                      null != _folders &&
-                      _folders!.isNotEmpty) {
-                    return MemeCard(
-                        meme: _memes![index], user: _user!, folders: _folders!);
+                        ),
+                        ListView.builder(
+                          primary: false,
+                          shrinkWrap: true,
+                          itemCount: _memes!.length,
+                          itemBuilder: (context, index) {
+                            return MemeCard(
+                              meme: snapshot.data![0][index],
+                              user: snapshot.data![1],
+                              folders: snapshot.data![2],
+                            );
+                          },
+                        )
+                      ],
+                    );
                   }
-                  return Container();
-                },
-              ),
-            ]),
+              }
+            },
           ),
         ),
-        onRefresh: () async {
-          await loadMemes();
-        });
+      ),
+      onRefresh: () async {
+        await loadMemes();
+      },
+    );
   }
 }

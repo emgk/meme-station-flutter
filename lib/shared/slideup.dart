@@ -112,7 +112,11 @@ class SlideUp extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    Navigator.of(context).pop({
+                      "NewParam0": "param0value",
+                      "NewParam1": "param1value",
+                      "NewParam2": "param2value"
+                    });
                     onClose!();
                   },
                   icon: Icon(

@@ -3,15 +3,16 @@
 import 'package:flutter/material.dart';
 import 'package:memestation/entities/jsonMap.dart';
 
-GestureDetector cardElement(Folder folder, Function? onPick) {
+GestureDetector cardElement(Folder folder, [Function? onPick]) {
   return GestureDetector(
     onTap: () {
-      onPick!(folder);
+      if (null != onPick) {
+        onPick(folder);
+      }
     },
     child: Container(
       margin: const EdgeInsets.only(
-        top: 5,
-        bottom: 5,
+        bottom: 10,
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(
@@ -40,16 +41,16 @@ GestureDetector cardElement(Folder folder, Function? onPick) {
         children: [
           Container(
             margin: EdgeInsets.only(
-              right: 20,
+              right: 10,
             ),
             alignment: Alignment.center,
-            height: 60,
+            height: 40,
             child: Container(
-              width: 60,
-              height: 60,
+              width: 40,
+              height: 40,
               child: !folder.memes!.isNotEmpty
                   ? Icon(
-                      Icons.image,
+                      Icons.folder,
                       color: Colors.black54,
                     )
                   : ClipRRect(
@@ -82,12 +83,12 @@ GestureDetector cardElement(Folder folder, Function? onPick) {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              SizedBox(height: 3),
-              Text(
-                folder.description,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(),
-              ),
+              // SizedBox(height: 3),
+              // Text(
+              //   folder.description,
+              //   overflow: TextOverflow.ellipsis,
+              //   style: TextStyle(),
+              // ),
             ],
           )
         ],

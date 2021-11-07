@@ -2,12 +2,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:memestation/pages/tabs/folders/addfolder.dart';
+import 'package:memestation/services/api_service.dart';
 import 'package:memestation/shared/foldercard.dart';
 import 'package:memestation/shared/formui.dart';
+import 'package:memestation/shared/loader.dart';
 import 'package:memestation/shared/slideup.dart';
 
-void folderPicker(context, folders, onPick) {
-  showModalBottomSheet(
+void folderPicker(context, folders, onPick) async {
+  await showModalBottomSheet(
+    useRootNavigator: true,
     backgroundColor: Colors.transparent,
     isDismissible: true,
     isScrollControlled: true,
@@ -30,7 +33,11 @@ void folderPicker(context, folders, onPick) {
                     topRight: Radius.circular(10),
                   ),
                 ),
-                child: header(context, folders, onPick),
+                child: header(
+                  context,
+                  folders,
+                  onPick,
+                ),
               );
             },
           ),
@@ -95,10 +102,30 @@ Column header(BuildContext context, folders, onPick) {
       ),
       Expanded(
         child: SingleChildScrollView(
-          child: Container(
-            child:
-                !folders.isNotEmpty ? noFolder() : foldersList(folders, onPick),
-            padding: EdgeInsets.all(20),
+          child: FutureBuilder<List<dynamic>>(
+            future: Future.wait([APIService.getFolders()]),
+            builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                  return Text('Press button to start');
+                case ConnectionState.waiting:
+                  return screenLoader(context);
+                default:
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return Container(
+                      child: !snapshot.data![0]!.isNotEmpty
+                          ? noFolder()
+                          : foldersList(
+                              snapshot.data![0],
+                              onPick,
+                            ),
+                      padding: EdgeInsets.all(20),
+                    );
+                  }
+              }
+            },
           ),
         ),
       )
@@ -111,6 +138,9 @@ foldersList(folders, onPick) {
     SlideUp(
       title: 'Create new folder',
       description: 'Please enter details below',
+      onClose: () async {
+        await APIService.getFolders();
+      },
       child: FormInput(
         label: "",
         hasPadding: false,
@@ -120,18 +150,20 @@ foldersList(folders, onPick) {
         children: [
           Container(
             padding: EdgeInsets.all(10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.add_circle,
-                  color: Colors.black87,
-                  size: 30,
-                ),
-                SizedBox(width: 5),
-                Text("Create new folder"),
-              ],
+            child: InkWell(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add_circle,
+                    color: Colors.black87,
+                    size: 30,
+                  ),
+                  SizedBox(width: 5),
+                  Text("Create new folder"),
+                ],
+              ),
             ),
           )
         ],

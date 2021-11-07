@@ -47,6 +47,8 @@ dependencies:
   flutter_svg: ^0.23.0+1
   jiffy: ^4.1.0
   eva_icons_flutter:
+  bottom_navy_bar:
+  material_design_icons_flutter:
 
 dev_dependencies:
   flutter_test:
@@ -76,6 +78,7 @@ flutter:
     - assets/images/isolated-monochrome-white.svg
     - assets/images/isolated-monochrome-black.svg
     - assets/images/default-monochrome.svg
+    - assets/images/profile-cover.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

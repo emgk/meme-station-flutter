@@ -249,10 +249,12 @@ class APIService {
     }
   }
 
-  static Future<List<Meme>> getMemes(
-    Map<String, dynamic> params,
-  ) async {
+  static Future<List<Meme>> getMemes([String? folderId]) async {
     String url = "$baseUrl/memes";
+
+    if (null != folderId) {
+      url = url + "?folderId=$folderId";
+    }
 
     try {
       // get access token
@@ -315,6 +317,35 @@ class APIService {
         }
 
         return folders;
+      } else {
+        throw Exception('Failed!');
+      }
+    } catch (e) {
+      throw Exception('$e');
+    }
+  }
+
+  static Future<Folder> getFolderById(String id) async {
+    String url = "$baseUrl/folders/$id";
+
+    try {
+      // get access token
+      String token = await getAccessToken();
+
+      final response = await dio.get(
+        url,
+        options: Options(
+          headers: {
+            "accept": "*/*",
+            "Content-Type": "application/json",
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        var apiResponJson = json.decode(jsonEncode(response.data));
+        return Folder.fromJson(apiResponJson);
       } else {
         throw Exception('Failed!');
       }
