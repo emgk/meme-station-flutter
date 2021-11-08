@@ -102,7 +102,7 @@ class _MemesListState extends State<MemesList> {
                                   Column(
                                     children: [
                                       Text(
-                                        "Welcome " + snapshot.data![1]?.name,
+                                        snapshot.data![1]?.name,
                                         style: TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w600,
@@ -161,6 +161,7 @@ class _MemesListState extends State<MemesList> {
                             left: 15,
                             right: 15,
                             top: 15,
+                            bottom: 0,
                           ),
                           decoration: BoxDecoration(
                             color: Colors.white,
@@ -181,6 +182,7 @@ class _MemesListState extends State<MemesList> {
                           ),
                         ),
                         ListView.builder(
+                          padding: EdgeInsets.only(top: 15),
                           primary: false,
                           shrinkWrap: true,
                           itemCount: _memes!.length,

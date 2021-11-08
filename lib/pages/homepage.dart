@@ -3,9 +3,7 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:memestation/pages/memeslist.dart';
-import 'package:memestation/pages/profile.dart';
 import 'package:memestation/pages/tabs/folders/foldersList.dart';
-import 'package:memestation/util/bottom_nav.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -18,8 +16,8 @@ class _HomePageState extends State<HomePage> {
   final tabs = [
     MemesList(),
     FoldersList(),
-    Center(child: Text("Global")),
-    Center(child: Text("Profile")),
+    Center(child: Text("Global (to be developed...)")),
+    Center(child: Text("Profile (to be developed...)")),
   ];
 
   @override
@@ -39,24 +37,24 @@ class _HomePageState extends State<HomePage> {
       extendBody: true,
       resizeToAvoidBottomInset: true,
       extendBodyBehindAppBar: false,
-      body: CustomScrollView(slivers: [
-        SliverAppBar(
-          // systemOverlayStyle: Brightness.light,
-          backgroundColor: Colors.white,
-          title: Text(
-            'memestation',
-            style: TextStyle(
-              color: Colors.orangeAccent,
-              fontSize: 28.0,
-              fontWeight: FontWeight.bold,
-              letterSpacing: -1.2,
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxScrolled) => [
+          SliverAppBar(
+            // systemOverlayStyle: Brightness.light,
+            backgroundColor: Colors.white,
+            title: Text(
+              'memestation',
+              style: TextStyle(
+                color: Colors.orangeAccent,
+                fontSize: 28.0,
+                fontWeight: FontWeight.bold,
+                letterSpacing: -1.2,
+              ),
             ),
           ),
-        ),
-        SliverToBoxAdapter(
-          child: tabs[_currentTabIndex],
-        ),
-      ]),
+        ],
+        body: tabs[_currentTabIndex],
+      ),
       bottomNavigationBar: BottomNavyBar(
           animationDuration: Duration(milliseconds: 300),
           onItemSelected: switchTab,

@@ -16,7 +16,7 @@ GestureDetector cardElement(Folder folder, [Function? onPick]) {
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(
-          Radius.circular(10),
+          Radius.circular(2),
         ),
         border: Border(
           top: BorderSide(
@@ -51,12 +51,12 @@ GestureDetector cardElement(Folder folder, [Function? onPick]) {
               child: !folder.memes!.isNotEmpty
                   ? Icon(
                       Icons.folder,
-                      color: Colors.black54,
+                      color: Colors.grey,
                     )
                   : ClipRRect(
                       borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        bottomLeft: Radius.circular(10),
+                        topLeft: Radius.circular(2),
+                        bottomLeft: Radius.circular(2),
                       ),
                       child: Image.network(
                         folder.memes![0].imageUrl ?? '',
@@ -65,10 +65,10 @@ GestureDetector cardElement(Folder folder, [Function? onPick]) {
                       ),
                     ),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: Colors.grey.shade300,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  bottomLeft: Radius.circular(10),
+                  topLeft: Radius.circular(2),
+                  bottomLeft: Radius.circular(2),
                 ),
               ),
             ),
@@ -79,9 +79,6 @@ GestureDetector cardElement(Folder folder, [Function? onPick]) {
               Text(
                 folder.title,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                ),
               ),
               // SizedBox(height: 3),
               // Text(

@@ -47,13 +47,54 @@ class _FoldersListState extends State<FoldersList> {
 
     return RefreshIndicator(
       onRefresh: () async {
-        await getFolders();
+        await APIService.getFolders();
+        setState(() {});
       },
-      child: Column(
-        children: [
-          SingleChildScrollView(
-            physics: ScrollPhysics(),
-            child: FutureBuilder<List<dynamic>>(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              color: Colors.white,
+              padding: EdgeInsets.only(left: 15, right: 15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "folders",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          Icons.refresh,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () async {
+                          await APIService.getFolders();
+                          setState(() {});
+                        },
+                      ),
+                      SlideUp(
+                        title: 'Create new folder',
+                        description: 'Please enter details below',
+                        child: AddFolder(),
+                        trigger: Icon(
+                          Icons.add,
+                          color: Colors.grey,
+                          size: 30,
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+            FutureBuilder<List<dynamic>>(
               future: APIService.getFolders(),
               builder: (context, snapshot) {
                 switch (snapshot.connectionState) {
@@ -70,45 +111,12 @@ class _FoldersListState extends State<FoldersList> {
                           Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
-                              ),
-                            ),
-                            padding: EdgeInsets.only(left: 20, right: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Folders",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                SlideUp(
-                                  title: 'Create new folder',
-                                  description: 'Please enter details below',
-                                  child: AddFolder(),
-                                  trigger: Icon(
-                                    Icons.add_circle,
-                                    color: Colors.black87,
-                                    size: 30,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
                             ),
                             margin: const EdgeInsets.only(
                               bottom: 0,
                             ),
                             padding:
-                                EdgeInsets.only(left: 20, right: 20, top: 0),
+                                EdgeInsets.only(left: 15, right: 15, top: 0),
                             child: tabContent(snapshot.data, setState),
                           ),
                         ],
@@ -116,9 +124,9 @@ class _FoldersListState extends State<FoldersList> {
                     }
                 }
               },
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -136,21 +144,26 @@ class _FoldersListState extends State<FoldersList> {
       return Column(
         children: [
           Center(
-            child: Column(
-              children: [
-                SizedBox(height: 50),
-                Icon(
-                  Icons.folder,
-                  size: 50,
-                  color: Colors.grey,
-                ),
-                Text(
-                  "No folder",
-                  style: TextStyle(
-                    fontSize: 15,
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.6,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(height: 50),
+                  Icon(
+                    Icons.folder,
+                    size: 50,
+                    color: Colors.grey,
                   ),
-                ),
-              ],
+                  Text(
+                    "No folder",
+                    style: TextStyle(
+                      fontSize: 15,
+                    ),
+                  ),
+                ],
+              ),
             ),
           )
         ],

@@ -101,31 +101,36 @@ Column header(BuildContext context, folders, onPick) {
         ),
       ),
       Expanded(
-        child: SingleChildScrollView(
-          child: FutureBuilder<List<dynamic>>(
-            future: Future.wait([APIService.getFolders()]),
-            builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-              switch (snapshot.connectionState) {
-                case ConnectionState.none:
-                  return Text('Press button to start');
-                case ConnectionState.waiting:
-                  return screenLoader(context);
-                default:
-                  if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else {
-                    return Container(
-                      child: !snapshot.data![0]!.isNotEmpty
-                          ? noFolder()
-                          : foldersList(
-                              snapshot.data![0],
-                              onPick,
-                            ),
-                      padding: EdgeInsets.all(20),
-                    );
-                  }
-              }
-            },
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await APIService.getFolders();
+          },
+          child: SingleChildScrollView(
+            child: FutureBuilder<List<dynamic>>(
+              future: Future.wait([APIService.getFolders()]),
+              builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                    return Text('Press button to start');
+                  case ConnectionState.waiting:
+                    return screenLoader(context);
+                  default:
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      return Container(
+                        child: !snapshot.data![0]!.isNotEmpty
+                            ? noFolder()
+                            : foldersList(
+                                snapshot.data![0],
+                                onPick,
+                              ),
+                        padding: EdgeInsets.all(20),
+                      );
+                    }
+                }
+              },
+            ),
           ),
         ),
       )
